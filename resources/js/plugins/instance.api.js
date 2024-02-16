@@ -1,5 +1,4 @@
 import axios from "axios";
-import {ca} from "vuetify/locale";
 
 
 export const axiosInstance =($url, $method, $token, $body,  $includes) => {
@@ -12,7 +11,7 @@ export const axiosInstance =($url, $method, $token, $body,  $includes) => {
         $apiUrl += $apiUrl + "?includes=" + $includes;
     }
 
-    return new Promise((resolve) => {
+    return new Promise((resolve,reject) => {
         if($body === undefined){
             if($token !== undefined)
                 axios.request({
@@ -23,7 +22,10 @@ export const axiosInstance =($url, $method, $token, $body,  $includes) => {
                         'Authorization': 'Bearer ' + $token
                     },
                     timeout: 180000,
-                }).then(r => resolve(r)).catch(e =>snackBar(e))
+                }).then(r => resolve(r)).catch(e => {
+                    snackBar(e)
+                    reject('ko')
+                })
             else
                 axios.request({
                     url: $apiUrl,
@@ -32,7 +34,10 @@ export const axiosInstance =($url, $method, $token, $body,  $includes) => {
                         'Content-Type': 'application/json',
                     },
                     timeout: 180000,
-                }).then(r => resolve(r)).catch(e =>snackBar(e))
+                }).then(r => resolve(r)).catch(e => {
+                snackBar(e)
+                reject('ko')
+            })
         }else{
             if($token !== undefined)
                 axios.request({
@@ -44,7 +49,10 @@ export const axiosInstance =($url, $method, $token, $body,  $includes) => {
                     },
                     data:$body,
                     timeout: 180000,
-                }).then(r => resolve(r)).catch(e =>snackBar(e))
+                }).then(r => resolve(r)).catch(e => {
+                    snackBar(e)
+                    reject('ko')
+                })
             else
                 axios.request({
                     url: $apiUrl,
@@ -54,7 +62,10 @@ export const axiosInstance =($url, $method, $token, $body,  $includes) => {
                     },
                     data:$body,
                     timeout: 180000,
-                }).then(r => resolve(r)).catch(e =>snackBar(e))
+                }).then(r => resolve(r)).catch(e => {
+                    snackBar(e)
+                    reject('ko')
+                })
         }
 
 
