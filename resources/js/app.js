@@ -5,7 +5,7 @@ import App from './App.vue';
 import vuetify from './plugins/vuetify';
 import axios from 'axios'
 
-const axiosInstance = axios.create({})
+
 
 const app = createApp(App)
     .use(router)

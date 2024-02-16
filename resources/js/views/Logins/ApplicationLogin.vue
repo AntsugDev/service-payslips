@@ -2,10 +2,18 @@
     <v-app>
         <v-main>
             <v-container class="fill-height" fluid>
-
                 <v-row align="center" justify="center">
                     <v-col cols="12" sm="8" md="4">
                         <v-card class="elevation-12">
+                            <v-snackbar v-model="snackbar.show" top :color="snackbar.color" :timeout="3000" dense absolute>
+                                {{ snackbar.text }}
+                                <template v-slot:action="{attr}">
+                                    <v-btn :color="snackbar.color" fab x-small dark v-bind="attr"
+                                           @click="$store.commit('snackbar/update', { show: false })" class="elevation-6">
+                                        <v-icon>mdi-close</v-icon>
+                                    </v-btn>
+                                </template>
+                            </v-snackbar>
                             <v-toolbar color="primary" dark flat dense>
                                 <v-toolbar-title color="secondary" class="font-weight-bold">ACCESSO</v-toolbar-title>
                             </v-toolbar>
@@ -63,6 +71,11 @@ export default {
                     return pattern.test(value) || 'Devi inserire un indirizzo email valido'
                 },
             },
+            snackbar:{
+                show:false,
+                color: null,
+                text:null
+            }
         }
     },
     methods: {
@@ -79,56 +92,20 @@ export default {
                 }
                 this.loginEnter(data).then(res => {
                     this.loading = false;
-                    console.log('ok',JSON.stringify(res))
-                }).catch(error => {
-                    let errorText = error.response.data
-                    this.$store.commit('snackbar/update', {
-                        show: true,
-                        color: 'waring',
-                        text: errorText
+                    let response = res.data
+                    this.$store.commit('user/create',response)
+                    this.$router.push({
+                        name: 'Home'
                     });
+
+                }).catch(error => {
+                    let errorText = error.response.data.error
+                    this.snackbar.show = true;
+                    this.snackbar.color = "red";
+                    this.snackbar.text = errorText;
                 }).finally(() => {
                     this.loading = false;
                 });
-                //     this.loading = false;
-                //     localStorage.setItem('pds-provisioning-token', res.data.access_token);
-                //
-                //
-                //
-                //
-                //     this.$router.push({ name: 'Home' }).then(() => console.log('Successfully Logged In')).catch(e => console.log(e));
-                // }).catch(e => {
-                //     if (e.response === undefined) {
-                //
-                //     } else {
-                //         let status = e.response.status;
-                //         switch (status.toString().charAt(0)) {
-                //             case '5':
-                //                 this.$store.commit('snackbar/update', {
-                //                     show: true,
-                //                     color: 'error',
-                //                     text: "Credenziali non valide"
-                //                 });
-                //                 break;
-                //             case '4':
-                //                 this.$store.commit('snackbar/update', {
-                //                     show: true,
-                //                     color: 'error',
-                //                     text: 'Credenziali non valide'
-                //                 });
-                //                 break;
-                //             default:
-                //                 this.$store.commit('snackbar/update', {
-                //                     show: true,
-                //                     color: 'error',
-                //                     text: e.toString()
-                //                 });
-                //                 break;
-                //         }
-                //     }
-                // }).finally(() => {
-                //     this.loading = false;
-                // });
             }
         }
     },

@@ -1,11 +1,11 @@
 import {th} from "vuetify/locale";
+import {axiosInstance, POST} from "../plugins/instance.api.js";
+
 
 let usersApi = {
     methods: {
         loginEnter: function (payloadRequestUser){
-        return this.axios.post('/api/token-user',{
-            data:payloadRequestUser
-        });
+            return axiosInstance('/api/token-user',POST,undefined,payloadRequestUser,undefined)
         },
         /** USERS */
         getUsers: function (params, userId) {

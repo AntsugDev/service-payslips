@@ -10,4 +10,15 @@ class Compaineis extends Model
 {
     use HasFactory;
     protected $connection = "mongodb";
+
+    protected $collection = "compains";
+
+
+    protected $fillable = [
+        "name",
+        "city",
+        "address",
+        'email',
+        'phone'
+    ];
 }

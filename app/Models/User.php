@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Session;
 use Laravel\Sanctum\HasApiTokens;
 use MongoDB\Laravel\Eloquent\Model;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -44,7 +45,7 @@ class User extends Model implements Authenticatable,JWTSubject
         'name',
         'code_user',
         'password',
-        'vp'
+        'company_id'
     ];
 
     public function getRememberToken()
@@ -78,7 +79,11 @@ class User extends Model implements Authenticatable,JWTSubject
             "type" => "Bearer",
             "expired" => Carbon::now()->addHours()->format('d/m/Y H:i:s'),
             "access_token" => null,
-            "users" => null
         ];
+    }
+
+
+    public function company (){
+        return $this->belongsTo(Compaineis::class,'company_id','_id');
     }
 }

@@ -1,20 +1,33 @@
 const state = () => ({
-    user: {
-        isAuthenticated: false,
-        firstName: null,
-        lastName: null,
-        email: null,
-        role: null,
-        jwtToken: null,
-        expired: null,
+    data: {
+        user:{
+            id: null,
+            name: null,
+            cf:null,
+            email:null,
+            isAuthenticated: false,
+            role: null,
+            jwt:{
+                type: null,
+                expired: null,
+                access_token: null
+            },
+        },
+        company:{
+            id: null,
+            name: null,
+            city: null,
+            address: null,
+            email: null,
+            phone:null
+        }
+
     }
 });
 
 const getters = {};
 const actions = {
-    setUsers(state,payload){
-        state.user = payload
-    }
+
 
 
 };
@@ -25,6 +38,9 @@ const mutations = {
                 state[prop] = attributes[prop]
             }
         }
+    },
+    create(state,payload){
+        state.data = payload
     }
 };
 
