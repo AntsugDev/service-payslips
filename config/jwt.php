@@ -27,6 +27,8 @@ return [
 
     'secret' => env('JWT_SECRET'),
 
+    'driver' => 'mongodb',
+
     /*
     |--------------------------------------------------------------------------
     | JWT Authentication Keys

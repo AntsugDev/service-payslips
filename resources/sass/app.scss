@@ -1,0 +1,78 @@
+@import '../../node_modules/@mdi/font/css/materialdesignicons.css';
+@import "../../node_modules/@fontsource/roboto/scss/mixins.scss";
+@import "@fontsource/roboto/100.css";
+@import "@fontsource/roboto/300.css";
+@import "@fontsource/roboto/400.css";
+@import "@fontsource/roboto/500.css";
+@import "@fontsource/roboto/700.css";
+@import "@fontsource/roboto/900.css";
+// Uses a unicode-range map to automatically generate multiple @font-face rules.
+// @include fontFace($fontName: 'Roboto',
+//     $weight: 100,
+//     $display: fallback,
+// $fontDir: "~@fontsource/roboto/files"
+// );
+
+// @font-face {
+//     font-family: 'Roboto';
+//     font-display: fallback;
+//     src: url('../../node_modules/@fontsource/roboto/Roboto-Regular.woff") format("woff");');
+//     font-weight: 100;
+// }
+
+// @include fontFace($fontName: 'Roboto',
+//     $weight: 300,
+//     $display: fallback,
+// $fontDir: "../../node_modules/@fontsource/roboto/files"
+// );
+// @include fontFace($fontName: 'Roboto',
+//     $weight: 400,
+//     $display: fallback,
+//     $fontDir: "../../node_modules/@fontsource/roboto/files"
+// );
+// @include fontFace($fontName: 'Roboto',
+//     $weight: 500,
+//     $display: fallback,
+//     $fontDir: "../../node_modules/@fontsource/roboto/files"
+// );
+// @include fontFace($fontName: 'Roboto',
+//     $weight: 700,
+//     $display: fallback,
+//     $fontDir: "../../node_modules/@fontsource/roboto/files"
+// );
+// @include fontFace($fontName: 'Roboto',
+//     $weight: 900,
+//     $display: fallback,
+//     $fontDir: "../../node_modules/@fontsource/roboto/files"
+// );
+// @import "../../node_modules/@fontsource/roboto-slab/scss/mixins.scss";
+// @include fontFace($fontName: 'Roboto Slab',
+//     $weight: 100,
+//     $display: fallback,
+//     $fontDir: "../../node_modules/@fontsource/roboto-slab/files"
+// );
+// @include fontFace($fontName: 'Roboto Slab',
+//     $weight: 300,
+//     $display: fallback,
+//     $fontDir: "../../node_modules/@fontsource/roboto-slab/files"
+// );
+// @include fontFace($fontName: 'Roboto Slab',
+//     $weight: 400,
+//     $display: fallback,
+//     $fontDir: "../../node_modules/@fontsource/roboto-slab/files"
+// );
+// @include fontFace($fontName: 'Roboto Slab',
+//     $weight: 500,
+//     $display: fallback,
+//     $fontDir: "../../node_modules/@fontsource/roboto-slab/files"
+// );
+// @include fontFace($fontName: 'Roboto Slab',
+//     $weight: 700,
+//     $display: fallback,
+//     $fontDir: "../../node_modules/@fontsource/roboto-slab/files"
+// );
+// @include fontFace($fontName: 'Roboto Slab',
+//     $weight: 900,
+//     $display: fallback,
+//     $fontDir: "../../node_modules/@fontsource/roboto-slab/files"
+// );

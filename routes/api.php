@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Api\Users\Users;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -13,7 +14,13 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+Route::middleware('data-request')->group(function (){
+    Route::post('/token-user',[Users::class,'show']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+    Route::middleware('jwt.auth')
+        ->prefix('v1')
+        ->group(function (){
+        });
 });
+
+

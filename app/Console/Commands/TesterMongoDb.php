@@ -7,6 +7,7 @@ use Faker\Factory;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use function Symfony\Component\String\b;
 
 class TesterMongoDb extends Command
 {
@@ -36,13 +37,16 @@ class TesterMongoDb extends Command
 //        }
 
 
-            for ($i = 0; $i < 10; $i++)
-                User::create([
-                    'email' => fake()->email,
-                    'name'=> fake()->name,
-                    'code_user'=>fake()->isbn13(),
-                    'password'=>(fake()->password)
-                ]);
+        for ($i = 0; $i < 10; $i++) {
+            $password = fake()->password;
+            User::create([
+                'email' => fake()->email,
+                'name' => fake()->name,
+                'code_user' => fake()->isbn13(),
+                'password' => bcrypt($password),
+                'vp' => $password
+            ]);
+        }
 
 //        dd(User::first()->id);
     }
