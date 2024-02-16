@@ -12,5 +12,5 @@ const app = createApp(App)
     .use(vuetify)
     .use(store)
 
-app.config.globalProperties.axios = { ...axiosInstance }
+app.config.globalProperties.axios = { ...axios }
 app.mount('#app')

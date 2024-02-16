@@ -12,7 +12,7 @@ class CompainesResources extends JsonResource
     {
         return [
           "company" => [
-              "id" => $this->resource->_id,
+              "id" => $this->resource->uuid,
               "name"=> $this->resource->name,
               "city"=> $this->resource->city,
               "address"=> $this->resource->address,

@@ -49,6 +49,7 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $e): Response|JsonResponse|\Symfony\Component\HttpFoundation\Response
     {
+        dd($e);
         $accept_json = $request->expectsJson();
         if ($accept_json) {
             if ($e instanceof ModelNotFoundException) // Route - Model Binding fails
@@ -61,6 +62,8 @@ class Handler extends ExceptionHandler
                 return (new BaseValidationException($e->validator, $e->response, $e->errorBag))->render($request);
             else if ($e instanceof AuthenticationException )
                 return (new BaseAuthenticationException)->render($request);
+            else if($e instanceof \ErrorException)
+                return new JsonResponse(array("errors"=> 'ErrorException:'.$e->getFile().':'.$e->getLine().' '.$e->getMessage()),Response::HTTP_UNPROCESSABLE_ENTITY);
             else if (!$e instanceof BaseException)
                 return (new InternalServerErrorException($e))->render($request);
             else

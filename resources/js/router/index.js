@@ -13,6 +13,8 @@ import AdminDeleteUser from "../views/Admin/Users/UsersDelete.vue";
 import AdminEditUser from "../views/Admin/Users/UsersEdit.vue";
 
 import AdminHome from "../views/Admin/AdminHome.vue";
+import moment from "moment";
+import UsersIndex from "../views/Admin/Users/UsersIndex.vue";
 
 const router = createRouter({
     history: createWebHistory(store.getters['config/appBasePath']),
@@ -22,47 +24,30 @@ const router = createRouter({
             name: 'Home',
             component: Home,
             beforeEnter: (to, from, next) => {
-                if (localStorage.getItem('pds-provisioning-token')) {
+                let jwt = store.getters['user/getJwt'];
+                if (jwt.access_token !== null) {
+                    let expired = jwt.expired
+                    let now = moment();
+                   if(expired > now.format('DD/MM/YYYY HH:mm:ss'))
                     next();
+                   else{
+                       next({ name: 'ApplicationLogin',query:{logout: "Session exipred"} });
+                   }
                 } else {
                     next({ name: 'ApplicationLogin' });
                 }
             },
-        },
-        {
-            path: '/admin',
-            name: 'AdminHome',
-            component: AdminHome,
-            beforeEnter: (to, from, next) => {
-                if (store.state.user.isAuthenticated === true) {
-                    next();
-                } else {
-                    next({ name: 'Home' });
-                }
-            },
             children: [
                 {
-                    path: 'users',
-                    name: 'AdminUsersIndex',
-                    component: AdminUsersIndex,
+                    path: 'user',
                     children: [
                         {
-                            path: "create",
-                            name: "AdminCreateUser",
-                            component: AdminCreateUser
-                        },
-                        {
-                            path: "edit/:id",
-                            name: "AdminEditUser",
-                            component: AdminEditUser
-                        },
-                        {
-                            path: "delete/:id",
-                            name: "AdminDeleteUser",
-                            component: AdminDeleteUser
+                            path:'details',
+                            name:'UserIndex',
+                            component: UsersIndex
                         }
                     ]
-                },
+                }
             ]
         },
         {

@@ -12,36 +12,46 @@ const state = () => ({
                 expired: null,
                 access_token: null
             },
+            company:{
+                id: null,
+                name: null,
+                city: null,
+                address: null,
+                email: null,
+                phone:null
+            }
         },
-        company:{
-            id: null,
-            name: null,
-            city: null,
-            address: null,
-            email: null,
-            phone:null
-        }
+
 
     }
 });
 
-const getters = {};
-const actions = {
-
-
-
-};
-const mutations = {
-    update(state, attributes) {
-        for (let prop in attributes) {
-            if (Object.prototype.hasOwnProperty.call(attributes, prop)) {
-                state[prop] = attributes[prop]
-            }
-        }
+const getters = {
+    getJwt: function (state){
+        return state.data.user.jwt
     },
-    create(state,payload){
-        state.data = payload
+    getIsAuth: function (state){
+        return state.data.user.isAuthenticated
+    },
+    getDatiUser:function (state){
+        return {
+            "id" : state.data.user.id,
+            "name": state.data.user.name,
+            "cf" : state.data.user.cf,
+            "email" : state.data.user.email,
+            "role" : state.data.user.role,
+            "company" : state.data.user.company !== undefined ? state.data.user.company.name : "",
+            "created_at" : state.data.user.created_at,
+            "updated_at" : state.data.user.updated_at,
+        }
     }
+};
+const actions = {};
+const mutations = {
+    create(state, attributes) {
+        state.data = attributes.data;
+    },
+
 };
 
 export default {

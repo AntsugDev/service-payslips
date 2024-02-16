@@ -15,11 +15,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::middleware('data-request')->group(function (){
-    Route::post('/token-user',[Users::class,'show']);
+    Route::post('/oauth',[Users::class,'show']);
+
 
     Route::middleware('jwt.auth')
         ->prefix('v1')
         ->group(function (){
+                Route::get('user/{companiew_id}', [Users::class, 'listUser']);
         });
 });
 

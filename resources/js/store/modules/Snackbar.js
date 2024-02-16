@@ -4,17 +4,7 @@ const state = () => ({
     color: null
 });
 
-const getters = {
-    getStatusSnackBarShow:state=> {
-        return state.show
-    },
-    getStatusSnackBarColors:state=> {
-        return state.color
-    },
-    getStatusSnackBarText:state=> {
-        return state.text
-    },
-};
+const getters = {};
 const actions = {};
 const mutations = {
     update(state, attributes) {

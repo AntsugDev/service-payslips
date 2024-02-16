@@ -41,6 +41,7 @@ class User extends Model implements Authenticatable,JWTSubject
      * @var array<int, string>
      */
     protected $fillable = [
+        'uuid',
         'email',
         'name',
         'code_user',
@@ -84,6 +85,6 @@ class User extends Model implements Authenticatable,JWTSubject
 
 
     public function company (){
-        return $this->belongsTo(Compaineis::class,'company_id','_id');
+        return $this->belongsTo(Compaineis::class,'company_id','uuid');
     }
 }

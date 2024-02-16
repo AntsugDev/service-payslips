@@ -5,16 +5,21 @@
                 <v-row align="center" justify="center">
                     <v-col cols="12" sm="8" md="4">
                         <v-card class="elevation-12">
-                            <v-snackbar v-model="snackbar.show" top :color="snackbar.color" :timeout="3000" dense absolute>
-                                {{ snackbar.text }}
-                                <template v-slot:action="{attr}">
-                                    <v-btn :color="snackbar.color" fab x-small dark v-bind="attr"
-                                           @click="$store.commit('snackbar/update', { show: false })" class="elevation-6">
-                                        <v-icon>mdi-close</v-icon>
-                                    </v-btn>
-                                </template>
-                            </v-snackbar>
+                            <template v-if="alert  !== null">
+                                <v-alert  color="info">{{alert}}</v-alert>
+                                <v-divider></v-divider>
+                            </template>
                             <v-toolbar color="primary" dark flat dense>
+
+                                <v-snackbar v-model="snackbar.show" top :color="snackbar.color" :timeout="3000" dense>
+                                    {{ snackbar.text }}
+                                    <template v-slot:actions>
+                                        <v-btn :color="snackbar.color" fab x-small dark
+                                               @click="$store.commit('snackbar/update', { show: false })" class="elevation-6">
+                                            <v-icon>mdi-close</v-icon>
+                                        </v-btn>
+                                    </template>
+                                </v-snackbar>
                                 <v-toolbar-title color="secondary" class="font-weight-bold">ACCESSO</v-toolbar-title>
                             </v-toolbar>
                             <v-card-text>
@@ -61,6 +66,7 @@ export default {
     mixins: [storeComputed,UsersApi],
     data() {
         return {
+            alert:null,
             valid: true,
             email: '',
             password: '',
@@ -76,6 +82,7 @@ export default {
                 color: null,
                 text:null
             }
+
         }
     },
     methods: {
@@ -94,24 +101,22 @@ export default {
                     this.loading = false;
                     let response = res.data
                     this.$store.commit('user/create',response)
-                    this.$router.push({
-                        name: 'Home'
-                    });
-
-                }).catch(error => {
-                    let errorText = error.response.data.error
-                    this.snackbar.show = true;
-                    this.snackbar.color = "red";
-                    this.snackbar.text = errorText;
-                }).finally(() => {
-                    this.loading = false;
-                });
+                    this.$router.push({name:'Home'});
+                })
             }
         }
     },
     computed: {
         config: function () {
             return this.$store.state.config;
+        },
+    },
+    mounted() {
+        if(this.$route.query.logout !== undefined){
+            this.alert = this.$route.query.logout
+            setTimeout(() => {
+                this.alert = null
+            },5000)
         }
     }
 }

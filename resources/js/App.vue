@@ -4,7 +4,6 @@
 
 <script>
 import storeComputed from "./mixins/storeComputed";
-import {mapState} from "vuex";
 export default {
     mixins: [storeComputed],
     name: "App",
