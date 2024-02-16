@@ -5,8 +5,12 @@ import {ca} from "vuetify/locale";
 export const axiosInstance =($url, $method, $token, $body,  $includes) => {
 
     let $apiUrl = window.appConfig.appUrl+'/'+$url;
-    if($includes !== undefined && Object.keys($includes).length > 0)
-        $apiUrl += $apiUrl+"?includes="+$includes.join(',');
+    if($includes !== undefined) {
+        if (typeof $includes === 'object')
+            $apiUrl += $apiUrl + "?includes=" + $includes.join(',');
+        else if(typeof $includes === 'string')
+        $apiUrl += $apiUrl + "?includes=" + $includes;
+    }
 
     return new Promise((resolve) => {
         if($body === undefined){
