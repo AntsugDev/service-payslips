@@ -6,6 +6,8 @@ use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class RequestData
 {
@@ -26,14 +28,14 @@ class RequestData
             return $next($response);
         }
         if($request->expectsJson()) {
-            if (stristr($requestUri, 'api/oauth') === false && $request->has('**api**')) {
-                if (!$headers->has('authorization') ||
-                    ($headers->has('authorization') && stristr($headers->get('authorization'), 'Bearer') == false)
-                ) {
-                    $response = new Response();
-                    return $response->setStatusCode(401);
+                if (stristr($requestUri, 'api/oauth') === false && $request->has('**api**')) {
+                    if (!$headers->has('uuid') ||
+                        ($headers->has('uuid') && stristr($headers->get('uuid'), 'Bearer') == false)
+                    ) {
+                        $response = new Response();
+                        return $response->setStatusCode(401);
+                    }
                 }
-            }
         }
         return $next($request);
     }

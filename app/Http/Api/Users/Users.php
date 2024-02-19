@@ -7,15 +7,16 @@ use App\Http\Api\Users\Filter\UserFilter;
 use App\Http\Api\Users\Requests\UserRequestToken;
 use App\Http\Api\Users\Resources\UserResource;
 use App\Http\Controllers\Controller;
-use App\Models\Compaineis;
 use App\Models\User;
-use Illuminate\Console\Command;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Session;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class Users extends Controller
@@ -23,6 +24,9 @@ class Users extends Controller
     /**
      * @throws \Exception
      */
+
+
+
     public function show(UserRequestToken $request, UserFilter $filter) {
 
         try {
@@ -32,9 +36,16 @@ class Users extends Controller
                 if (!$checkPassword)
                     return new JsonResponse(array("error" => "La password non è corretta"), Response::HTTP_FORBIDDEN);
                 try {
-                    $token = JWTAuth::fromUser($user);
-                    $user = $user->load($filter->get_includes());
-                    return new UserResource($token, $user);
+
+                    if($token = JWTAuth::attempt([
+                        "email" => $request->input('email'),
+                        "password" => $request->input('password')
+                    ])){
+                        $user = Auth::user();
+                        return new UserResource($token, $user);
+                    }else
+                        return new JsonResponse(array("error" =>'Invalid credentials'), Response::HTTP_NOT_ACCEPTABLE);
+
                 } catch (JWTException $e) {
                     return new JsonResponse(array("error" =>'\JWTException: '.$e->getFile().':'.$e->getLine().' '.$e->getMessage()), Response::HTTP_UNPROCESSABLE_ENTITY);
                 } catch (InvalidIncludeException $e) {
@@ -49,17 +60,4 @@ class Users extends Controller
         }
     }
 
-
-    public function listUser(/*Compaineis $compaineis*/)
-    {
-        try {
-            $token = JWTAuth::parseToken();
-            $user = $token->authenticate();
-            dd($user);
-        }catch (\Exception $e){
-            dd($e);
-        }
-
-//        dd($compaineis->list_user());
-    }
 }

@@ -17,7 +17,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Throwable;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class Handler extends ExceptionHandler
 {
@@ -49,7 +51,6 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $e): Response|JsonResponse|\Symfony\Component\HttpFoundation\Response
     {
-        dd($e);
         $accept_json = $request->expectsJson();
         if ($accept_json) {
             if ($e instanceof ModelNotFoundException) // Route - Model Binding fails
@@ -64,6 +65,9 @@ class Handler extends ExceptionHandler
                 return (new BaseAuthenticationException)->render($request);
             else if($e instanceof \ErrorException)
                 return new JsonResponse(array("errors"=> 'ErrorException:'.$e->getFile().':'.$e->getLine().' '.$e->getMessage()),Response::HTTP_UNPROCESSABLE_ENTITY);
+            else if($e instanceof  UnauthorizedHttpException) {
+                return new JsonResponse(array("errors" => 'Token expired e/o User not found('.$e->getMessage().')'), Response::HTTP_NOT_ACCEPTABLE);
+            }
             else if (!$e instanceof BaseException)
                 return (new InternalServerErrorException($e))->render($request);
             else

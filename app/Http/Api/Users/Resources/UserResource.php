@@ -16,16 +16,16 @@ use Illuminate\Support\Facades\Crypt;
 class UserResource extends JsonResource
 {
 
-    private string|null $accessToken;
+    private string|null|array $accessToken;
 
     private array|null $queryString = array();
     private User $user;
 
     /**
-     * @param string|null $accessToken
+     * @param string|null|array $accessToken
      * @param User $user
      */
-    public function __construct(string|null $accessToken,User $user)
+    public function __construct(string|null|array $accessToken,User $user)
     {
         parent::__construct($user);
         $this->accessToken = $accessToken;
@@ -34,39 +34,44 @@ class UserResource extends JsonResource
             parse_str(request()->getQueryString(),$this->queryString);
         }
         $this->queryString = array_values($this->queryString);
-
     }
 
 
     public function toArray(Request $request): array
     {
-        $claims = $this->resource->getJWTCustomClaims();
-        $claims['access_token'] = $this->accessToken;
+//        $claims = $this->resource->getJWTCustomClaims();
+//        $claims['access_token'] = $this->accessToken;
 
-        return  [
-            "user" => [
-                'id' => $this->resource->uuid,
-                "name" => $this->resource->name,
-                "cf" => $this->resource->email,
-                "email" => Crypt::decryptString( $this->resource->code_user),
-                "isAuthenticated" => !is_null($this->accessToken),
-                "role" => strcmp($this->resource->company_id,'') !== 0 ? 'user' : 'company',
-                "jwt" => $claims,
-                "company"=> $this->when(in_array('company',$this->queryString), function () use($request){
-                    try {
-                        $companies = Compaineis::where('uuid', $this->resource->company_id)->first();
-                        if ($companies instanceof Compaineis)
-                            return (new CompainesResources($companies))->toArray($request)['company'];
-                        return null;
-                    }catch (ModelNotFoundException|\Exception $e){
-                        return new JsonResponse(array("errors" => "Exception Resource: ".$e->getFile().':'.$e->getLine().' '.$e->getMessage()),Response::HTTP_UNPROCESSABLE_ENTITY);
-                    }
 
-                }),
-                'created_at' => $this->resource->created_at,
-                'updated_at'=> $this->resource->updated_at,
-            ]
-        ];
+            return [
+                "user" => [
+                    'id' => $this->resource->id,
+                    'uuid' => $this->resource->uuid,
+                    "name" => $this->resource->name,
+//                    "cf" => Crypt::decryptString($this->resource->code_user),
+                    "cf" =>$this->resource->code_user,
+                    "email" => $this->resource->email,
+                    "isAuthenticated" => !is_null($this->accessToken),
+                    "role" => strcmp($this->resource->company_id, '') !== 0 ? 'user' : 'company',
+                    "jwt" => $this->accessToken,
+                    "company_id" => $this->resource->company_id,
+                    "user_id" => $this->resource->user_id,
+                    "company" => $this->when(in_array('company', $this->queryString), function () use ($request) {
+                        try {
+                            $companies = Compaineis::where('uuid', $this->resource->company_id)->first();
+                            if ($companies instanceof Compaineis)
+                                return (new CompainesResources($companies))->toArray($request)['company'];
+                            return null;
+                        } catch (ModelNotFoundException|\Exception $e) {
+                            return new JsonResponse(array("errors" => "Exception Resource: " . $e->getFile() . ':' . $e->getLine() . ' ' . $e->getMessage()), Response::HTTP_UNPROCESSABLE_ENTITY);
+                        }
+
+                    }),
+                    'created_at' => $this->resource->created_at,
+                    'updated_at' => $this->resource->updated_at,
+                ]
+            ];
+
 
     }
 }

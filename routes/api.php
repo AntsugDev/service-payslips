@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Api\Compaines\CompaineisController;
 use App\Http\Api\Users\Users;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -17,12 +18,14 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('data-request')->group(function (){
     Route::post('/oauth',[Users::class,'show']);
 
-
     Route::middleware('jwt.auth')
         ->prefix('v1')
         ->group(function (){
-                Route::get('user/{companiew_id}', [Users::class, 'listUser']);
+                Route::get('companies', [CompaineisController::class, 'listUser']);
         });
+
 });
+
+
 
 

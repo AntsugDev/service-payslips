@@ -19,17 +19,17 @@ class User extends Model implements Authenticatable,JWTSubject
     use  HasFactory,HasApiTokens;
 
 
+    protected $primaryKey = 'uuid';
 
     public function getAuthIdentifierName(): string
     {
-        return 'code_user';
+        return 'uuid';
     }
 
     public function getAuthIdentifier()
     {
         return $this->getKey();
     }
-
 
 
     protected $connection="mongodb";
@@ -46,7 +46,8 @@ class User extends Model implements Authenticatable,JWTSubject
         'name',
         'code_user',
         'password',
-        'company_id'
+        'user_id', //rappresenta se l'utente è figlio di un altro utente
+        'company_id' //rappresenta id azienda
     ];
 
     public function getRememberToken()
@@ -76,15 +77,17 @@ class User extends Model implements Authenticatable,JWTSubject
 
     public function getJWTCustomClaims(): array
     {
-        return [
-            "type" => "Bearer",
-            "expired" => Carbon::now()->addHours()->format('d/m/Y H:i:s'),
-            "access_token" => null,
-        ];
+        return [];
     }
 
 
-    public function company (){
-        return $this->belongsTo(Compaineis::class,'company_id','uuid');
+    public function company (string $code_user){
+
+        return User::where('user_id',$code_user);
     }
+
+
+
+
+
 }
