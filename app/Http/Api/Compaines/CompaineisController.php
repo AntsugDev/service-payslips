@@ -16,7 +16,7 @@ class CompaineisController extends Controller
 {
     public function listUser(Request $request) {
         $user = $request->user();
-        $list = $user->company($user->code_user)->get();
+        $list = $user->company($user->uuid);
         return new JsonResponse((new UserResourceCollection($list))->toArray($request),Response::HTTP_OK);
     }
 

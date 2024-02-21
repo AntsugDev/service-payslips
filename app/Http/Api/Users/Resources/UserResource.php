@@ -55,11 +55,10 @@ class UserResource extends JsonResource
                     'id' => $this->resource->id,
                     'uuid' => $this->resource->uuid,
                     "name" => $this->resource->name,
-//                    "cf" => Crypt::decryptString($this->resource->code_user),
-                    "cf" =>$this->resource->code_user,
+                    "code_user" => Crypt::decryptString($this->resource->code_user),
                     "email" => $this->resource->email,
                     "isAuthenticated" => !is_null($this->accessToken),
-                    "role" => strcmp($this->resource->company_id, '') !== 0 ? 'user' : 'company',
+                    "role" => is_null($this->resource->user_id) ? 'company' : 'user',
                     "jwt" => $this->jwt,
                     "company_id" => $this->resource->company_id,
                     "user_id" => $this->resource->user_id,
@@ -74,6 +73,7 @@ class UserResource extends JsonResource
                         }
 
                     }),
+                    'password_at' => $this->resource->password_at,
                     'created_at' => $this->resource->created_at,
                     'updated_at' => $this->resource->updated_at,
                 ]

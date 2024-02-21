@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Http\Api\Core\Random;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -10,12 +11,14 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class GenerateJwt extends Command
 {
+
+    use Random;
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'generate-jwt';
+    protected $signature = 'tester';
 
     /**
      * The console command description.
@@ -30,23 +33,6 @@ class GenerateJwt extends Command
      */
     public function handle()
     {
-        $user = User::where('email','tkreiger@yahoo.com')
-            ->where('vp','C?^U@*X<`L1yK5wU%')->first();
-        if($user instanceof User){
-            try {
-                $claims = $user->getJWTCustomClaims();
-                $token  = JWTAuth::fromUser($user);
-                $claims['access_token'] = $token;
-                \Laravel\Prompts\info(json_encode($claims,true));
-                Command::SUCCESS;
-            }catch (JWTException $exception) {
-                $this->error($exception->getFile().':'.$exception->getLine().' - '.$exception->getMessage());
-                Command::FAILURE;
-            }
-        }else {
-            $this->error("User non presente");
-            Command::FAILURE;
-        }
-//        }
+        dd($this->generatePIVA());
     }
 }

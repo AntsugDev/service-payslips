@@ -46,8 +46,9 @@ class User extends Model implements Authenticatable,JWTSubject
         'name',
         'code_user',
         'password',
-        'user_id', //rappresenta se l'utente è figlio di un altro utente
-        'company_id' //rappresenta id azienda
+        'password_at',
+        'user_id', //user padre uguale a uuid
+        'company_id' //la relazione con la tabella companies
     ];
 
     public function getRememberToken()
@@ -81,9 +82,9 @@ class User extends Model implements Authenticatable,JWTSubject
     }
 
 
-    public function company (string $code_user){
+    public function company (string $uuid){
 
-        return User::where('user_id',$code_user);
+        return User::where('user_id',$uuid)->get();
     }
 
     public function checkId (string $id){

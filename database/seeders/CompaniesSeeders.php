@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Http\Api\Core\Random;
 use App\Models\Compaineis;
 use App\Models\User;
 use Carbon\Carbon;
@@ -16,6 +17,7 @@ use function Laravel\Prompts\error;
 class CompaniesSeeders
 {
 
+    use Random;
     private ConsoleOutput $consoleOutput;
     private  ProgressBar $progressBar;
 
@@ -54,10 +56,13 @@ class CompaniesSeeders
                         [
                             'email' => $email,
                             'name' => $company,
-                            'code_user' => (fake()->isbn10()),
+                            'code_user' => Crypt::encryptString($this->generatePIVA()),
                             'password' => Hash::make(trim(strtolower(str_replace('','_',explode('@',$email)[0]))).'.007'),
-                            'company_id' => $compain->uuid,
-                            'uuid' => Str::uuid()->toString()
+                            'pw'=>trim(strtolower(str_replace('','_',explode('@',$email)[0]))).'.007',
+                            'password_at' => Carbon::now()->format('d/m/Y H:i:s'),
+                            'uuid' => Str::uuid()->toString(),
+                            "company_id" => $compain->uuid,
+                            "user_id" => null
                         ]
                 );
             }else

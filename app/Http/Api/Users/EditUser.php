@@ -9,6 +9,7 @@ use App\Http\Api\Users\Resources\UserResource;
 use App\Http\Api\Users\Resources\UserResourceNoToken;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Js;
@@ -33,7 +34,7 @@ class EditUser extends Controller
             throw  new \Exception("La password non corrisponde a quella attuale");
 
         if($request->validationData()){
-            $user = User::where('_id',$id)->update(['password' => Hash::make($request->input('newPassword'))]);
+            $user = User::where('_id',$id)->update(['pw'=> $request->input('newPassword'),'password' => Hash::make($request->input('newPassword')),'password_at' => \Illuminate\Support\Carbon::now()->format('d/m/Y H:i:s')]);
             if($user){
                 return  $this->json("Password aggiornata con successo");
             }
@@ -50,6 +51,8 @@ class EditUser extends Controller
             if($request->uniqueCodeUser() && $request->existCompanies()){
                 $data = $request->validationData();
                 $data['password'] = Hash::make($data['password']);
+                $data['pw'] = $data['password'];
+                $data['password_at'] = Carbon::now()->format('d/m/Y H:i:s');
                 $data['uuid'] = Str::uuid()->toString();
                 $user = User::create($data);
                 if($user instanceof User){

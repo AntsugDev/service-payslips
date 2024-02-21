@@ -38,7 +38,8 @@ class Users extends Controller
         try {
             $user = User::where('email', $request->input('email'))->first();
             if ($user instanceof User) {
-                $checkPassword = Hash::check($request->input('password'), $user->getAuthPassword());
+
+                $checkPassword = Hash::check($request->input('password'), $user->password);
                 if (!$checkPassword)
                     return new JsonResponse(array("error" => "La password non è corretta"), Response::HTTP_FORBIDDEN);
                 try {
@@ -84,7 +85,10 @@ class Users extends Controller
             throw new UnauthorizedException("Procedura non autorizzata");
 
         if($request->validationData()){
-                $user = User::where('uuid',$uuid)->update(['password' => Hash::make($request->input('newPassword'))]);
+                $user = User::where('uuid',$uuid)->update([
+                    'pw'=> $request->input('password'),
+                    'password' => Hash::make($request->input('password')),
+                    'password_at' => Carbon::now()->format('d/m/Y H:i:s')]);
                 if($user){
                     return  $this->json("Password aggiornata con successo",$uuid);
                 }

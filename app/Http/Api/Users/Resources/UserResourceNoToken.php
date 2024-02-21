@@ -25,10 +25,10 @@ class UserResourceNoToken extends JsonResource
                 "user" => [
                     'id' => $this->resource->id,
                     "name" => $this->resource->name,
-//                    "cf" => Crypt::decryptString($this->resource->code_user),
-                    "cf" => $this->resource->code_user,
+                    "code_user" => Crypt::decryptString($this->resource->code_user),
                     "email" => $this->resource->email,
-                    "role" => strcmp($this->resource->company_id, '') === 0 ? 'user' : 'company',
+                    "role" => is_null($this->resource->user_id) ? 'company' : 'user',
+                    'password_at' => $this->resource->password_at,
                     'created_at' => $this->resource->created_at,
                     'updated_at' => $this->resource->updated_at,
                 ]

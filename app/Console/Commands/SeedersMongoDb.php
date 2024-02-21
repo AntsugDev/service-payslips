@@ -44,11 +44,17 @@ class SeedersMongoDb extends Command
 
         \Laravel\Prompts\info("Inizio creazione collection mongodb...");
         try {
-            DB::connection('mongodb')->table('users')->delete();
-            DB::connection('mongodb')->table('companies')->delete();
+            $dropDb = $this->anticipate('Vuoi cancellare il db?[s,n]',['s','n']);
+
+            if(strcmp($dropDb,'s') === 0){
+                DB::connection('mongodb')->table('users')->delete();
+                DB::connection('mongodb')->table('companies')->delete();
+            }
+
             $lenCompainies = $this->ask('Inidica il numero di aziende da inserire');
             $compainesSeeders = new CompaniesSeeders($lenCompainies);
             $compainesSeeders->run();
+
             $lenuser = $this->ask('Inidica il numero di utenti da inserire');
             $userSeeders = new UserCreateSeeders($lenuser);
             $userSeeders->run();

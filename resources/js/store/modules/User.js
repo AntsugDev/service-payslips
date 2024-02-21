@@ -37,16 +37,20 @@ const getters = {
         return {
             "id" : state.data.user.id,
             "name": state.data.user.name,
-            "cf" : state.data.user.cf,
+            "code_user" : state.data.user.code_user,
             "email" : state.data.user.email,
             "role" : state.data.user.role,
-            "company" : state.data.user.company !== undefined ? state.data.user.company.name : "",
-            "created_at" : state.data.user.created_at,
-            "updated_at" : state.data.user.updated_at,
+            "company" : state.data.user.company !== null ? state.data.user.company.name : "",
+            "password_at" : state.data.user.password_at !== null ? state.data.user.password_at : "",
+            "created_at" : state.data.user.created_at !== null ? state.data.user.created_at : "",
+            "updated_at" : state.data.user.updated_at !== null ? state.data.user.updated_at: "",
         }
     },
     getEmailUser:function (state){
       return   state.data.user.email;
+    },
+    getRole: function (state){
+        return state.data.user.role === 'user'
     }
 };
 const actions = {};

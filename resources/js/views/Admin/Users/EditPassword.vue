@@ -9,50 +9,12 @@
                 </v-toolbar-title>
             </v-toolbar>
             <v-card-text>
-                <v-form v-model="valid" ref="formPassword">
-                    <v-container>
-                        <v-row>
-                            <v-col cols="12">
-                                <v-text-field
-                                    :disabled="getUsersRequest.loading"
-                                    v-model="form.password"
-                                    :rules="[value => !!value || 'Campo obbligatorio']"
-                                    label="Password Attuale"
-                                    :type="show.password ? 'text' : 'password'"
-                                    :append-icon="show.password ? 'mdi-eye' : 'mdi-eye-off'"
-                                    @click:append="show.password = !show.password"
-                                ></v-text-field>
-                            </v-col>
-                        </v-row>
-                        <v-row>
-                            <v-col cols="12">
-                                <v-text-field
-                                    v-model="form.newPassword"
-                                    :disabled="getUsersRequest.loading"
-                                    :rules="[value => !!value || 'Campo obbligatorio']"
-                                    label="Nuova Password"
-                                    :type="show.newPassword ? 'text' : 'password'"
-                                    :append-icon="show.newPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                                    @click:append="show.newPassword = !show.newPassword"
-                                ></v-text-field>
-                            </v-col>
-                        </v-row>
-                        <v-row>
-                            <v-col cols="12">
-                                <v-text-field
-                                    v-model="form.confrimPassword"
-                                    :disabled="getUsersRequest.loading"
-                                    :rules="[value => !!value || 'Campo obbligatorio',form.confrimPassword === form.newPassword || 'Le due password non corrispondono']"
-                                    label="Conferma Password"
-                                    :type="show.confrimPassword ? 'text' : 'password'"
-                                    :append-icon="show.confrimPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                                    @click:append="show.confrimPassword = !show.confrimPassword"
-                                    :error-messages="error"
-                                ></v-text-field>
-                            </v-col>
-                        </v-row>
-                    </v-container>
-                </v-form>
+                <PasswordComponent
+                    :form="form"
+                    :loading="getUsersRequest.loading"
+                    :oldPassword="false"
+                    ref="PasswordComponent"
+                ></PasswordComponent>
 
             </v-card-text>
             <v-divider dark></v-divider>
@@ -76,9 +38,11 @@
 
 
 import UsersApi from "../../../mixins/UsersApi.js";
+import PasswordComponent from "../../Common/PasswordComponent.vue";
 
 export  default {
     name:'EditPassword',
+    components: {PasswordComponent},
     mixins:[UsersApi],
     data: () => ({
         getSelectedUserRequest: { loading: false },
@@ -88,22 +52,16 @@ export  default {
         form : {
             password: '',
             newPassword: '',
-            confrimPassword: ''
+            confirmPassword: ''
         },
         error:null,
-        show:{
-            password: false,
-            newPassword: false,
-            confrimPassword: false
-        },
     }),
     methods: {
         modifiedPassword: function (){
-            this.$refs.formPassword.validate().then(r => {
-                if(r.valid){
+            if(this.$refs.PasswordComponent.valid){
                     this.getUsersRequest.loading = true
-                    delete this.form.confrimPassword
-                    return this.changePassword(this.form,this.$route.params.id).then(r => {
+                    delete this.$refs.PasswordComponent.form.confirmPassword
+                    return this.changePassword(this.$refs.PasswordComponent.form,this.$route.params.id).then(r => {
                         this.getUsersRequest.loading = false
                         this.form.confrimPassword = '';
                         this.form.newPassword = '';
@@ -122,7 +80,6 @@ export  default {
                     this.show.confrimPassword =  false;
                 }
 
-            })
         }
     }
 }

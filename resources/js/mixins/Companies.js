@@ -4,7 +4,11 @@ const Companies = {
     methods: {
         listAll: function (){
             return axiosInstance('/api/companies/all',GET);
+        },
+        childrenUser:function (){
+            return axiosInstance('/api/v1/companies',GET)
         }
+
     }
 }
 

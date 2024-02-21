@@ -27,12 +27,19 @@
                     </v-btn>
                 </template>
 
+                <template v-slot:[`item.company`]="{ item }" >
+                    <v-btn small dark color="warning" v-if="item.company === undefined">
+                        child
+                    </v-btn>
+                    <span v-else>{{item.company}}</span>
+                </template>
+
                 <template v-slot:[`item.created_at`]="{ item }">
-                    {{ formatDate(item.created_at) }}
+                    {{ item.created_at !== null ? formatDate(item.created_at) : ""}}
                 </template>
 
                 <template v-slot:[`item.updated_at`]="{ item }">
-                    {{ formatDate(item.updated_at) }}
+                    {{ item.updated_at !== null ? formatDate(item.updated_at) : "" }}
                 </template>
 
                 <template v-slot:[`item.actions`]="{ item }">
@@ -53,7 +60,7 @@
                                    @click="$router.push({ name: 'AdminEditUser', params: { id: item.id } })">
                             </v-btn>
                             <v-btn
-                                v-if="(item.role === 'company')"
+                                v-if="(item.role === 'user')"
                                 icon="mdi-delete"
                                 density="compact"
                                 color="warning"
@@ -63,6 +70,9 @@
 
 
             </v-data-table>
+
+
+
         </v-container>
     </v-app>
 </template>
@@ -71,25 +81,29 @@
 import storeComputed from "../../../mixins/storeComputed";
 import usersApi from "../../../mixins/UsersApi";
 import moment from 'moment';
+import Companies from "../../../mixins/Companies.js";
+import store from "../../../store/index.js";
 
 export default {
     name: "Users",
-    mixins: [storeComputed, usersApi],
+    mixins: [storeComputed, usersApi,Companies],
     data: () => ({
         getUsersRequest: { loading: false },
         options: {},
         users: [],
+        role: null,
         headers: [
-            { title: "Id", key: "id" },
             { title: "Nome", key: "name" },
-            { title: "Codice Fiscale", key: "cf" },
+            { title: "Codice Fiscale/PIVA", key: "code_user" },
             { title: "Email", key: "email" },
             { title: "Ruolo", key: "role" },
             { title: "Azienda", key: "company" },
             { title: "Creato il", key: "created_at" },
             { title: "Ultima modifica", key: "updated_at" },
+            { title: "Password modificata il", key: "password_at" },
             { title: "Azioni", key: "actions", cellClass: 'text-no-wrap' }
-        ]
+        ],
+
     }),
     methods: {
         roleColor: function (value) {
@@ -105,9 +119,23 @@ export default {
         setUsers: function () {
             this.users = [this.$store.getters['user/getDatiUser']]
         },
+        listUserChildren : function (){
+            let role = store.getters['user/getRole']
+            this.role = role
+            if(!role){
+                this.childrenUser().then(r => {
+                    let data = r.data.data;
+                    data.map(e => {
+                        let row = e.user
+                        this.users.push(row)
+                    })
+                })
+            }
+        }
     },
     created() {
         this.setUsers();
+        this.listUserChildren()
     }
 }
 </script>

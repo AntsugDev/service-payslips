@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Http\Api\Core\Random;
 use App\Models\Compaineis;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -13,6 +15,7 @@ use function Laravel\Prompts\error;
 
 class UserCreateSeeders
 {
+    use Random;
 
     private ConsoleOutput $consoleOutput;
     private  ProgressBar $progressBar;
@@ -37,20 +40,23 @@ class UserCreateSeeders
         for($i = 0 ; $i < $this->len ; $i ++){
             $this->progressBar->advance();
             try {
-                $userPadre = User::where('company_id', '!=', null)->take(1)->skip(rand(0, User::all()->count()))->first();
-                if($userPadre instanceof  User) {
+                $userPadre = User::whereNull('user_id')->get()->toArray();
+                if(is_array($userPadre) && count($userPadre) > 0) {
+                    $random = $userPadre[rand(0,count($userPadre)-1)];
                     $email = fake()->email;
-                    User::insert(
-                        [
+                    User::create(
                             [
                                 'email' => $email,
                                 'name' => fake()->firstName . ' ' . fake()->lastName,
-                                'code_user' => fake()->isbn13(),
+                                'code_user' => Crypt::encryptString($this->generateFiscalCode()),
                                 'password' => Hash::make(trim(strtolower(str_replace('', '_', explode('@', $email)[0]))) . '.007'),
-                                'user_id' => $i % 2 === 0 ? $userPadre->code_user : null,
+                                'password_at' => Carbon::now()->format('d/m/Y H:i:s'),
+                                'user_id' => $random['uuid'],
+                                'company_id' => null,
+                                'created_at'=> Carbon::now(),
+                                'update_at'=> Carbon::now(),
                                 'uuid' => Str::uuid()->toString()
                             ]
-                        ]
                     );
                 }
             }catch (\Exception $e){

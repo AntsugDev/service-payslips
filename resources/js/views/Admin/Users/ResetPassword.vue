@@ -20,10 +20,10 @@
                                     <v-row>
                                         <v-col cols="12" class="py-0">
                                             <v-stepper
-                                                       hide-actions
-                                                       prev-text=""
-                                                       :next-text="(step.next === 0 ? 'Verifica email' :'Aggiorna')"
-                                                       v-model="step.next"
+                                                hide-actions
+                                                prev-text=""
+                                                :next-text="(step.next === 0 ? 'Verifica email' :'Aggiorna')"
+                                                v-model="step.next"
                                             >
                                                 <v-stepper-header>
                                                     <v-stepper-item
@@ -36,7 +36,6 @@
                                                     ></v-stepper-item>
                                                 </v-stepper-header>
                                                 <v-stepper-window>
-
                                                     <v-stepper-window-item value="0" >
                                                         <v-form ref="formStep1" v-model="step.validStep1">
                                                             <v-text-field
@@ -47,46 +46,14 @@
                                                             ></v-text-field>
                                                         </v-form>
                                                     </v-stepper-window-item>
-
                                                     <v-stepper-window-item value="1" >
-
-                                                        <v-form v-model="step.validStep2" ref="formStep2">
-                                                            <v-container>
-                                                                <v-row>
-                                                                    <v-col cols="12">
-                                                                        <v-text-field
-                                                                            v-model="form.password"
-                                                                            :disabled="getUsersRequest.loading"
-                                                                            :rules="[value => !!value || 'Campo obbligatorio']"
-                                                                            label="Nuova Password"
-                                                                            :type="show.newPassword ? 'text' : 'password'"
-                                                                            :append-icon="show.newPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                                                                            @click:append="show.newPassword = !show.newPassword"
-                                                                        ></v-text-field>
-                                                                    </v-col>
-                                                                </v-row>
-                                                                <v-row>
-                                                                    <v-col cols="12">
-                                                                        <v-text-field
-                                                                            v-model="form.confrimPassword"
-                                                                            :disabled="getUsersRequest.loading"
-                                                                            :rules="[value => !!value || 'Campo obbligatorio',form.confrimPassword === form.password || 'Le due password non corrispondono']"
-                                                                            label="Conferma Password"
-                                                                            :type="show.confrimPassword ? 'text' : 'password'"
-                                                                            :append-icon="show.confrimPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                                                                            @click:append="show.confrimPassword = !show.confrimPassword"
-                                                                            :error-messages="error"
-                                                                        ></v-text-field>
-                                                                    </v-col>
-                                                                </v-row>
-                                                            </v-container>
-                                                        </v-form>
-
-
+                                                        <PasswordComponent
+                                                            :form="form"
+                                                            :loading="getUsersRequest.loading"
+                                                            :oldPassword="true"
+                                                            ref="PasswordComponent"
+                                                        ></PasswordComponent>
                                                     </v-stepper-window-item>
-
-
-
                                                 </v-stepper-window>
                                                 <v-stepper-actions @click:next="stepper(step.next)" color="success" :disabled="progress || 'prev'">
                                                     <v-progress-circular indeterminate color="dark" v-if="progress"></v-progress-circular>
@@ -111,10 +78,11 @@ import UsersApi from "../../../mixins/UsersApi.js";
 import storeComputed from "../../../mixins/storeComputed.js";
 import BackRoute from "../../Common/BackRoute.vue";
 import SnackBarCommon from "../../Common/SnackBarCommon.vue";
+import PasswordComponent from "../../Common/PasswordComponent.vue";
 
 export default {
     name: 'ResetPassword',
-    components: {SnackBarCommon, BackRoute},
+    components: {PasswordComponent, SnackBarCommon, BackRoute},
     mixins:[UsersApi,storeComputed],
     data: () => ({
         items: ['Email','Password'],
@@ -138,7 +106,7 @@ export default {
         error: null,
         form : {
             password: '',
-            confrimPassword: ''
+            confirmPassword: ''
         },
         getUsersRequest: { loading: false },
         show:{
@@ -172,26 +140,27 @@ export default {
                 })
             }else{
                 this.progress = true
-                this.$refs.formStep2.validate().then(r => {
-                    if(r.valid){
-                        delete this.form.confrimPassword
-                        this.changePasswordStepper(this.form,this.uuid).then(r => {
-                            this.$router.push({name:'ApplicationLogin',query:{logout: "Password utente aggiornato"}})
-                        }).catch(e => {
-                            let error = e.response.data.errors
-                            if(error !== undefined) {
-                                this.error = error
-                                this.progress = false;
-                                this.closeAlert()
-                            }
-                        })
-                    }else
-                        this.step.next = liv
-                    this.progress = false
-                })
-            }
+                if(this.$refs.PasswordComponent.valid){
+                    delete this.$refs.PasswordComponent.form.confirmPassword
+                    this.changePasswordStepper(this.$refs.PasswordComponent.form,this.uuid).then(r => {
+                        this.$router.push({name:'ApplicationLogin',query:{logout: "Password utente aggiornato"}})
+                    }).catch(e => {
+                        let error = e.response.data.errors
+                        if(error !== undefined) {
+                            this.error = error
+                            this.progress = false;
+                            this.closeAlert()
+                        }
+                    })
 
+                }
+                else {
+                    this.step.next = liv
+                    this.progress = false
+                }
+            }
         },
+
         closeAlert: function () {
             setTimeout(() => {
                 this.error = null
