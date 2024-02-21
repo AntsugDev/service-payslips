@@ -20,6 +20,9 @@ Route::middleware('data-request')->group(function (){
     Route::post('/oauth',[Users::class,'show']);
     Route::get('/reset/check_email/{email}',[Users::class,'check_email']);
     Route::post('/reset/update_password/{uuid}',[Users::class,'reset_password']);
+    Route::get('/companies/all',[CompaineisController::class, 'list']);
+    Route::put('/create',[EditUser::class, 'store']);
+
 
     Route::middleware('jwt.auth')
         ->prefix('v1')
@@ -28,6 +31,7 @@ Route::middleware('data-request')->group(function (){
                 Route::prefix('/user')->group(function (){
                     Route::post('/password/{id}',[EditUser::class,'edit_password']);
                 });
+
         });
 
 });

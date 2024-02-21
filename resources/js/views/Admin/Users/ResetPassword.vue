@@ -5,17 +5,9 @@
                 <v-row align="center" justify="center">
                     <v-col cols="12" sm="8" md="4">
                         <v-card class="elevation-12">
-                            <v-snackbar v-model="snackbar.show" top :color="snackbar.color" :timeout="3000" dense>
-                                {{ snackbar.text }}
-                                <template v-slot:action="{ attrs }">
-                                    <v-btn :color="snackbar.color" fab x-small dark v-bind="attrs"
-                                           @click="$store.commit('snackbar/update', { show: false })" class="elevation-6">
-                                        <v-icon>mdi-close</v-icon>
-                                    </v-btn>
-                                </template>
-                            </v-snackbar>
+                            <SnackBarCommon></SnackBarCommon>
                             <v-toolbar color="primary" dark flat dense>
-                                <v-icon alt="Torna alla login" title="Torna alla login" @click="$router.push({name:'ApplicationLogin'})">mdi-keyboard-backspace</v-icon>
+                                <BackRoute name-router="ApplicationLogin"></BackRoute>
                                 <v-toolbar-title color="secondary" class="font-weight-bold">RESET PASSWORD</v-toolbar-title>
                             </v-toolbar>
                             <v-card-text>
@@ -117,9 +109,12 @@
 
 import UsersApi from "../../../mixins/UsersApi.js";
 import storeComputed from "../../../mixins/storeComputed.js";
+import BackRoute from "../../Common/BackRoute.vue";
+import SnackBarCommon from "../../Common/SnackBarCommon.vue";
 
 export default {
     name: 'ResetPassword',
+    components: {SnackBarCommon, BackRoute},
     mixins:[UsersApi,storeComputed],
     data: () => ({
         items: ['Email','Password'],

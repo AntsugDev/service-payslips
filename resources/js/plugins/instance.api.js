@@ -37,7 +37,8 @@ export const axiosInstance =($url, $method,  $body,  $includes) => {
                     resolve(r)
                 }).catch(e => {
                     // if($url.indexOf('oauth') === -1 && $url.indexOf('reset') === -1)
-                        handleResponseError(e)
+                    handleResponseError(e)
+                    reject(e)
                     // else reject(e)
                 })
             else
@@ -56,7 +57,8 @@ export const axiosInstance =($url, $method,  $body,  $includes) => {
                     resolve(r)
                 }).catch(e => {
                     // if($url.indexOf('oauth') === -1 && $url.indexOf('reset') === -1)
-                        handleResponseError(e)
+                    handleResponseError(e)
+                    reject(e)
                     // else reject(e)
                 })
         }else{
@@ -78,7 +80,8 @@ export const axiosInstance =($url, $method,  $body,  $includes) => {
                     resolve(r)
                 }).catch(e => {
                     // if($url.indexOf('oauth') === -1 && $url.indexOf('reset') === -1)
-                        handleResponseError(e)
+                    handleResponseError(e)
+                    reject(e)
                     // else reject(e)
                 })
             else
@@ -97,8 +100,10 @@ export const axiosInstance =($url, $method,  $body,  $includes) => {
                     }
                     resolve(r)
                 }).catch(e => {
+                    console.log('Error=>',JSON.stringify(e.response.data))
                     // if($url.indexOf('oauth') === -1 && $url.indexOf('reset') === -1)
-                        handleResponseError(e)
+                    handleResponseError(e)
+                    reject(e)
                     // else reject(e)
                 })
         }

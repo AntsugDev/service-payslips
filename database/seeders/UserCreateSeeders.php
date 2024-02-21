@@ -40,14 +40,16 @@ class UserCreateSeeders
                 $userPadre = User::where('company_id', '!=', null)->take(1)->skip(rand(0, User::all()->count()))->first();
                 if($userPadre instanceof  User) {
                     $email = fake()->email;
-                    User::create(
+                    User::insert(
                         [
-                            'email' => $email,
-                            'name' => fake()->firstName . ' ' . fake()->lastName,
-                            'code_user' => fake()->isbn13(),
-                            'password' => Hash::make(trim(strtolower(str_replace('', '_', explode('@', $email)[0]))) . '.007'),
-                            'user_id' => $i % 2 === 0 ? $userPadre->code_user : null,
-                            'uuid' => Str::uuid()->toString()
+                            [
+                                'email' => $email,
+                                'name' => fake()->firstName . ' ' . fake()->lastName,
+                                'code_user' => fake()->isbn13(),
+                                'password' => Hash::make(trim(strtolower(str_replace('', '_', explode('@', $email)[0]))) . '.007'),
+                                'user_id' => $i % 2 === 0 ? $userPadre->code_user : null,
+                                'uuid' => Str::uuid()->toString()
+                            ]
                         ]
                     );
                 }

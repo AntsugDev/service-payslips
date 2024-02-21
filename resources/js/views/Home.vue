@@ -1,15 +1,6 @@
 <template>
     <v-app id="inspire">
-        <v-snackbar v-model="snackbar.show" top :color="snackbar.color" :timeout="3000" dense>
-            {{ snackbar.text }}
-            <template v-slot:action="{ attrs }">
-                <v-btn :color="snackbar.color" fab x-small dark v-bind="attrs"
-                       @click="$store.commit('snackbar/update', { show: false })" class="elevation-6">
-                    <v-icon>mdi-close</v-icon>
-                </v-btn>
-            </template>
-        </v-snackbar>
-
+        <SnackBarCommon></SnackBarCommon>
         <v-navigation-drawer app v-model="drawer" color="primary" :clipped="true" :mini-variant.sync="mini" permanent flat>
             <v-list dense dark>
                 <template v-for="item in drawerItems">
@@ -46,14 +37,7 @@
             <v-app-bar-nav-icon @click.stop="mini = !mini" class="primary white--text"></v-app-bar-nav-icon>
             <v-toolbar-title class="white--text text-uppercase font-weight-bold">Service PaySlips</v-toolbar-title>
             <v-spacer></v-spacer>
-                <v-btn
-                    stacked
-                    icon="mdi-logout"
-                    size="x-small"
-                    alt="Logout"
-                    title="Logout"
-                    @click="logout">
-                </v-btn>
+            <BtnLogout></BtnLogout>
         </v-app-bar>
         <v-main>
 
@@ -66,8 +50,11 @@
 
 
 import storeComputed from "../mixins/storeComputed.js";
+import SnackBarCommon from "./Common/SnackBarCommon.vue";
+import BtnLogout from "./Common/BtnLogout.vue";
 
 export default {
+    components: {BtnLogout, SnackBarCommon},
     mixins: [storeComputed],
     name: "Home",
     data: () => ({
@@ -75,7 +62,6 @@ export default {
         mini: false,
         userMenu: false,
         drawerItems: [
-            { text: "Dettaglio Utente", icon: "mdi-account", routeName: "UserIndex", children: [] },
             // {
             //     text: "Data Management",
             //     icon: "mdi-database",

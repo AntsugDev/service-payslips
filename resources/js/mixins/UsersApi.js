@@ -1,4 +1,4 @@
-import {axiosInstance, GET, POST} from "../plugins/instance.api.js";
+import {axiosInstance, GET, POST, PUT} from "../plugins/instance.api.js";
 
 
 let usersApi = {
@@ -17,6 +17,9 @@ let usersApi = {
         changePasswordStepper: function (payloadRequest,uuid){
             let path = '/api/reset/update_password/'+uuid
             return axiosInstance(path,POST,payloadRequest)
+        },
+        createUser: function (payloadRequest){
+            return axiosInstance('/api/create',PUT,payloadRequest)
         }
 
     }

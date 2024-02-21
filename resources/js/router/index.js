@@ -25,14 +25,15 @@ const router = createRouter({
                 let jwt = store.getters['user/getJwt'];
                 if (jwt.access_token !== null) {
                     let expired = jwt.expired
-                    let now = moment();
-                   if(expired > now.format('DD/MM/YYYY HH:mm:ss'))
-                    next();
+                    let now   = moment();
+                   if(expired > now.format('DD/MM/YYYY HH:mm:ss')){
+                       next();
+                   }
                    else{
                        next({ name: 'ApplicationLogin',query:{logout: "Session exipred"} });
                    }
                 } else {
-                    next({ name: 'ApplicationLogin' });
+                    next({ name: 'ApplicationLogin',query:{logout:"Errore in fase di login, autorizzazione negata"} });
                 }
             },
             children: [
@@ -72,7 +73,7 @@ const router = createRouter({
         },
         {
             path: '/:pathMatch(.*)*',
-            redirect: { name: 'Home', params: {} }
+            redirect: { name: 'ApplicationLogin', query: {logout:"Page not found"} }
         }
     ],
 });

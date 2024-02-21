@@ -10,17 +10,7 @@
                                 <v-divider></v-divider>
                             </template>
                             <v-toolbar color="primary" dark flat dense>
-
-
-                                <v-snackbar v-model="snackbar.show" top :color="snackbar.color" :timeout="3000" dense>
-                                    {{ snackbar.text }}
-                                    <template v-slot:action="{ attrs }">
-                                        <v-btn :color="snackbar.color" fab x-small dark v-bind="attrs"
-                                               @click="$store.commit('snackbar/update', { show: false })" class="elevation-6">
-                                            <v-icon>mdi-close</v-icon>
-                                        </v-btn>
-                                    </template>
-                                </v-snackbar>
+                                <SnackBarCommon></SnackBarCommon>
                                 <v-toolbar-title color="secondary" class="font-weight-bold">ACCESSO</v-toolbar-title>
                             </v-toolbar>
                             <v-card-text>
@@ -44,37 +34,46 @@
                                         </v-col>
                                     </v-row>
                                 </v-container>
+                                <v-divider></v-divider>
                             </v-card-text>
                             <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn
-                                    variant="flat"
-                                    color="primary" class="font-weight-bold" width="33%"
-                                    @click="login"
-                                    :disabled="loading">
-                                    Accedi
-                                </v-btn>
-
-                                <v-btn
-                                    variant="flat"
-                                    color="info"
-                                    class="font-weight-bold"
-                                    width="33%"
-                                    @click="$router.push({name: 'CreateUser'})"
-                                    :disabled="loading">
-                                    Crea utenza
-                                </v-btn>
-
-                                <v-btn
-                                    variant="flat"
-                                    color="warning"
-                                    class="font-weight-bold"
-                                    width="33%"
-                                    @click="$router.push({name: 'ResetPassword'})"
-                                    :disabled="loading">
-                                    Reset Password
-                                </v-btn>
-
+                                <v-container>
+                                    <v-row dense>
+                                        <v-col cols="12">
+                                            <v-btn
+                                                variant="outlined"
+                                                color="primary" class="font-weight-bold"
+                                                width="100%"
+                                                @click="login"
+                                                :disabled="loading">
+                                                Accedi
+                                            </v-btn>
+                                        </v-col>
+                                    </v-row>
+                                    <v-row dense justify="space-between">
+                                        <v-col cols="6">
+                                            <v-btn
+                                            variant="outlined"
+                                            color="info"
+                                            class="font-weight-bold"
+                                            width="100%"
+                                            @click="$router.push({name: 'CreateUser'})"
+                                            :disabled="loading">
+                                            Crea utenza
+                                        </v-btn></v-col>
+                                        <v-col cols="6">
+                                            <v-btn
+                                                variant="outlined"
+                                                color="warning"
+                                                class="font-weight-bold"
+                                                width="100%"
+                                                @click="$router.push({name: 'ResetPassword'})"
+                                                :disabled="loading">
+                                                Reset Password
+                                            </v-btn>
+                                        </v-col>
+                                    </v-row>
+                                </v-container>
                             </v-card-actions>
                         </v-card>
                     </v-col>
@@ -88,9 +87,11 @@
 import storeComputed from "../../mixins/storeComputed";
 import UsersApi from "../../mixins/UsersApi.js";
 import {th} from "vuetify/locale";
+import SnackBarCommon from "../Common/SnackBarCommon.vue";
 
 export default {
     name: "ApplicationLogin",
+    components: {SnackBarCommon},
     mixins: [storeComputed,UsersApi],
     data() {
         return {
@@ -128,12 +129,9 @@ export default {
                     this.$store.commit('user/create',response)
                     this.$router.push({name:'Home'});
                 }).catch(e =>{
-                    let error = e.response.data.error
-                    if(error !== undefined) {
-                        this.alert = error
                         this.loading = false;
                     }
-                })
+                )
             }
         }
     },
@@ -148,7 +146,7 @@ export default {
             setTimeout(() => {
                 this.alert = null
                 this.$router.push({name:'ApplicationLogin'})
-            },5000)
+            },10000)
         }
     }
 }

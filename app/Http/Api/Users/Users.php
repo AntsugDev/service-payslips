@@ -50,18 +50,18 @@ class Users extends Controller
                         $user = Auth::user();
                         return new UserResource($token, $user);
                     }else
-                        return new JsonResponse(array("error" =>'Invalid credentials'), Response::HTTP_NOT_ACCEPTABLE);
+                        return new JsonResponse(array("errors" =>'Invalid credentials'), Response::HTTP_NOT_ACCEPTABLE);
 
                 } catch (JWTException $e) {
-                    return new JsonResponse(array("error" =>'\JWTException: '.$e->getFile().':'.$e->getLine().' '.$e->getMessage()), Response::HTTP_UNPROCESSABLE_ENTITY);
+                    return new JsonResponse(array("errors" =>'\JWTException: '.$e->getFile().':'.$e->getLine().' '.$e->getMessage()), Response::HTTP_UNPROCESSABLE_ENTITY);
                 } catch (InvalidIncludeException $e) {
-                    return new JsonResponse(array("error" => $e->getMessage()), Response::HTTP_NOT_FOUND);
+                    return new JsonResponse(array("errors" => $e->getMessage()), Response::HTTP_NOT_FOUND);
                 }
             } else {
-                return new JsonResponse(array("error" => "User non presente"), Response::HTTP_NOT_FOUND);
+                return new JsonResponse(array("errors" => "User non presente"), Response::HTTP_NOT_FOUND);
             }
         }catch (\Exception $e){
-            return new JsonResponse(array("error" =>$e->getFile().':'.$e->getLine().' '.$e->getMessage()), Response::HTTP_UNPROCESSABLE_ENTITY);
+            return new JsonResponse(array("errors" =>$e->getFile().':'.$e->getLine().' '.$e->getMessage()), Response::HTTP_UNPROCESSABLE_ENTITY);
 
         }
     }
@@ -93,4 +93,7 @@ class Users extends Controller
         }
         throw new UnauthorizedException("Password errata o non si hanno le autorizzazioni necessarie");
     }
+
+
+
 }

@@ -44,6 +44,9 @@ const getters = {
             "created_at" : state.data.user.created_at,
             "updated_at" : state.data.user.updated_at,
         }
+    },
+    getEmailUser:function (state){
+      return   state.data.user.email;
     }
 };
 const actions = {};
