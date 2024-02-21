@@ -16,6 +16,7 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
+use Spatie\FlareClient\Http\Exceptions\NotFound;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Throwable;
@@ -59,8 +60,9 @@ class Handler extends ExceptionHandler
                 return (new ForbiddenException)->render($request);
             else if ($e instanceof MethodNotAllowedHttpException)
                 return (new MethodNotAllowedException)->render($request);
-            else if ($e instanceof ValidationException)
+            else if ($e instanceof ValidationException) {
                 return (new BaseValidationException($e->validator, $e->response, $e->errorBag))->render($request);
+            }
             else if ($e instanceof AuthenticationException )
                 return (new BaseAuthenticationException)->render($request);
             else if($e instanceof \ErrorException)
@@ -68,10 +70,14 @@ class Handler extends ExceptionHandler
             else if($e instanceof  UnauthorizedHttpException) {
                 return new JsonResponse(array("errors" => 'Token expired e/o User not found('.$e->getMessage().')'), Response::HTTP_NOT_ACCEPTABLE);
             }
+            else if($e instanceof  NotFound){
+                return new JsonResponse(array("errors" => $e->getMessage()), Response::HTTP_NOT_ACCEPTABLE);
+            }
+            else if($e instanceof \Exception)
+                return new JsonResponse(array("errors" => $e->getMessage()), Response::HTTP_NOT_ACCEPTABLE);
             else if (!$e instanceof BaseException)
                 return (new InternalServerErrorException($e))->render($request);
-            else
-                return (new \Exception($e))->render($request);
+
         }
         return parent::render($request, $e);
     }

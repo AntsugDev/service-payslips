@@ -11,10 +11,11 @@
                             </template>
                             <v-toolbar color="primary" dark flat dense>
 
+
                                 <v-snackbar v-model="snackbar.show" top :color="snackbar.color" :timeout="3000" dense>
                                     {{ snackbar.text }}
-                                    <template v-slot:actions>
-                                        <v-btn :color="snackbar.color" fab x-small dark
+                                    <template v-slot:action="{ attrs }">
+                                        <v-btn :color="snackbar.color" fab x-small dark v-bind="attrs"
                                                @click="$store.commit('snackbar/update', { show: false })" class="elevation-6">
                                             <v-icon>mdi-close</v-icon>
                                         </v-btn>
@@ -35,7 +36,10 @@
                                                               label="Password" name="password" prepend-icon="mdi-lock"
                                                               v-model="password"
                                                               :rules="[value => !!value || 'Devi inserire la password']"
-                                                              type="password"></v-text-field>
+                                                              :type="show.password ? 'text' : 'password'"
+                                                              :append-icon="show.password ? 'mdi-eye' : 'mdi-eye-off'"
+                                                              @click:append="show.password = !show.password"
+                                                ></v-text-field>
                                             </v-form>
                                         </v-col>
                                     </v-row>
@@ -43,10 +47,34 @@
                             </v-card-text>
                             <v-card-actions>
                                 <v-spacer></v-spacer>
-                                <v-btn color="primary" class="font-weight-bold" width="100%" dark @click="login"
-                                       :disabled="loading">
+                                <v-btn
+                                    variant="flat"
+                                    color="primary" class="font-weight-bold" width="33%"
+                                    @click="login"
+                                    :disabled="loading">
                                     Accedi
                                 </v-btn>
+
+                                <v-btn
+                                    variant="flat"
+                                    color="info"
+                                    class="font-weight-bold"
+                                    width="33%"
+                                    @click="$router.push({name: 'CreateUser'})"
+                                    :disabled="loading">
+                                    Crea utenza
+                                </v-btn>
+
+                                <v-btn
+                                    variant="flat"
+                                    color="warning"
+                                    class="font-weight-bold"
+                                    width="33%"
+                                    @click="$router.push({name: 'ResetPassword'})"
+                                    :disabled="loading">
+                                    Reset Password
+                                </v-btn>
+
                             </v-card-actions>
                         </v-card>
                     </v-col>
@@ -77,12 +105,9 @@ export default {
                     return pattern.test(value) || 'Devi inserire un indirizzo email valido'
                 },
             },
-            snackbar:{
-                show:false,
-                color: null,
-                text:null
-            }
-
+            show:{
+                password:false
+            },
         }
     },
     methods: {
@@ -102,6 +127,12 @@ export default {
                     let response = res.data
                     this.$store.commit('user/create',response)
                     this.$router.push({name:'Home'});
+                }).catch(e =>{
+                    let error = e.response.data.error
+                    if(error !== undefined) {
+                        this.alert = error
+                        this.loading = false;
+                    }
                 })
             }
         }
@@ -116,6 +147,7 @@ export default {
             this.alert = this.$route.query.logout
             setTimeout(() => {
                 this.alert = null
+                this.$router.push({name:'ApplicationLogin'})
             },5000)
         }
     }

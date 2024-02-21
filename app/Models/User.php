@@ -86,6 +86,10 @@ class User extends Model implements Authenticatable,JWTSubject
         return User::where('user_id',$code_user);
     }
 
+    public function checkId (string $id){
+        return User::where('id',$id)->count() > 0;
+    }
+
 
 
 

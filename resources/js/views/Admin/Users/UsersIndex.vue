@@ -36,25 +36,29 @@
                 </template>
 
                 <template v-slot:[`item.actions`]="{ item }">
-                    <v-row>
-                        <v-col xs="12" sm="6" :md="(item.role === 'company') ? 12 : 6">
+
+                            <v-btn icon="mdi-lock-reset"
+                                   density="compact"
+                                   color="lime"
+                                   alt="Modifica Password"
+                                   title="Modifica Password"
+                                   @click="$router.push({ name: 'EditPassword', params: { id: item.id } })">
+                            </v-btn>
+
                             <v-btn icon="mdi-pencil"
-                                   stacked
-                                   size="x-small"
+                                   density="compact"
                                    color="primary"
+                                   alt="Modifica Utenza"
+                                   title="Modifica Utenza"
                                    @click="$router.push({ name: 'AdminEditUser', params: { id: item.id } })">
                             </v-btn>
-                        </v-col>
-                        <v-col xs="12" sm="6" md="6"  v-if="(item.role === 'company')">
                             <v-btn
-                                stacked
+                                v-if="(item.role === 'company')"
                                 icon="mdi-delete"
-                                size="x-small"
+                                density="compact"
                                 color="warning"
                                 @click="$router.push({ name: 'AdminDeleteUser', params: { id: item.id } })">
                             </v-btn>
-                        </v-col>
-                    </v-row>
                 </template>
 
 
@@ -64,14 +68,13 @@
 </template>
 
 <script>
-import ResponseErrorHandler from "../../../mixins/ResponseErrorHandler";
 import storeComputed from "../../../mixins/storeComputed";
 import usersApi from "../../../mixins/UsersApi";
 import moment from 'moment';
 
 export default {
     name: "Users",
-    mixins: [ResponseErrorHandler, storeComputed, usersApi],
+    mixins: [storeComputed, usersApi],
     data: () => ({
         getUsersRequest: { loading: false },
         options: {},

@@ -6,6 +6,7 @@ use App\Http\Api\Compaines\Resource\CompainesResources;
 use App\Http\Api\Users\Requests\UserRequestToken;
 use App\Models\Compaineis;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,6 +20,8 @@ class UserResource extends JsonResource
     private string|null|array $accessToken;
 
     private array|null $queryString = array();
+
+    private array $jwt;
     private User $user;
 
     /**
@@ -29,6 +32,10 @@ class UserResource extends JsonResource
     {
         parent::__construct($user);
         $this->accessToken = $accessToken;
+        if(is_string($accessToken))
+        $this->jwt = array("access_token" => $accessToken,"expired" => Carbon::now()->addHours()->format('d/m/Y H:i:s'));
+        else
+            $this->jwt = is_null($this->accessToken) ? [] : $this->accessToken;
 
         if(stristr(request()->getQueryString(),'includes') !== false){
             parse_str(request()->getQueryString(),$this->queryString);
@@ -53,7 +60,7 @@ class UserResource extends JsonResource
                     "email" => $this->resource->email,
                     "isAuthenticated" => !is_null($this->accessToken),
                     "role" => strcmp($this->resource->company_id, '') !== 0 ? 'user' : 'company',
-                    "jwt" => $this->accessToken,
+                    "jwt" => $this->jwt,
                     "company_id" => $this->resource->company_id,
                     "user_id" => $this->resource->user_id,
                     "company" => $this->when(in_array('company', $this->queryString), function () use ($request) {

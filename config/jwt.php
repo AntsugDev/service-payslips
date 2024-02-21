@@ -29,6 +29,7 @@ return array(
 
     'driver' => 'mongodb',
 
+    'identifier' => "code_user",
     /*
     |--------------------------------------------------------------------------
     | JWT Authentication Keys

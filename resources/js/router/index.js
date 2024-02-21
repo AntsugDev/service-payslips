@@ -7,14 +7,12 @@ import Home from "../views/Home.vue";
 import ApplicationLogin from "../views/Logins/ApplicationLogin.vue";
 
 /** Admin */
-import AdminUsersIndex from "../views/Admin/Users/UsersIndex.vue";
-import AdminCreateUser from "../views/Admin/Users/UsersCreate.vue";
-import AdminDeleteUser from "../views/Admin/Users/UsersDelete.vue";
-import AdminEditUser from "../views/Admin/Users/UsersEdit.vue";
 
-import AdminHome from "../views/Admin/AdminHome.vue";
 import moment from "moment";
 import UsersIndex from "../views/Admin/Users/UsersIndex.vue";
+import EditPassword from "../views/Admin/Users/EditPassword.vue";
+import ResetPassword from "../views/Admin/Users/ResetPassword.vue";
+import CreateUser from "../views/Admin/Users/CreateUser.vue";
 
 const router = createRouter({
     history: createWebHistory(store.getters['config/appBasePath']),
@@ -45,7 +43,13 @@ const router = createRouter({
                             path:'details',
                             name:'UserIndex',
                             component: UsersIndex
-                        }
+                        },
+                        {
+                            path:'password/:id',
+                            name:'EditPassword',
+                            component: EditPassword
+                        },
+
                     ]
                 }
             ]
@@ -53,11 +57,22 @@ const router = createRouter({
         {
             path: '/application-login',
             name: 'ApplicationLogin',
-            component: ApplicationLogin
+            component: ApplicationLogin,
+
+        },
+        {
+            path:'/reset/password',
+            name:'ResetPassword',
+            component: ResetPassword
+        },
+        {
+            path:'/user/create',
+            name:'CreateUser',
+            component: CreateUser
         },
         {
             path: '/:pathMatch(.*)*',
-            redirect: { name: 'AdminHome', params: {} }
+            redirect: { name: 'Home', params: {} }
         }
     ],
 });

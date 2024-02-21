@@ -2,8 +2,13 @@
 
 namespace App\Http\Api\Users;
 
+use App\Http\Api\Core\Exceptions\Client\UnauthorizedException;
 use App\Http\Api\Core\Exceptions\Includes\InvalidIncludeException;
+use App\Http\Api\Core\UserTrait;
 use App\Http\Api\Users\Filter\UserFilter;
+use App\Http\Api\Users\Requests\EditPasswordUser;
+use App\Http\Api\Users\Requests\EditPasswordUserNew;
+use App\Http\Api\Users\Requests\UserRequestStepperOne;
 use App\Http\Api\Users\Requests\UserRequestToken;
 use App\Http\Api\Users\Resources\UserResource;
 use App\Http\Controllers\Controller;
@@ -14,6 +19,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Spatie\FlareClient\Http\Exceptions\NotFound;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
@@ -24,7 +30,7 @@ class Users extends Controller
     /**
      * @throws \Exception
      */
-
+    use UserTrait;
 
 
     public function show(UserRequestToken $request, UserFilter $filter) {
@@ -60,4 +66,31 @@ class Users extends Controller
         }
     }
 
+    /**
+     * @throws NotFound
+     * @throws UnauthorizedException
+     */
+    public function check_email(string $email): JsonResponse|null
+    {
+        return  $this->checkEmail($email);
+    }
+
+    /**
+     * @throws UnauthorizedException
+     */
+    public function reset_password(EditPasswordUserNew $request, string $uuid): JsonResponse|null
+    {
+        if(strcmp($uuid,'') === 0 )
+            throw new UnauthorizedException("Procedura non autorizzata");
+
+        if($request->validationData()){
+                $user = User::where('uuid',$uuid)->update(['password' => Hash::make($request->input('newPassword'))]);
+                if($user){
+                    return  $this->json("Password aggiornata con successo",$uuid);
+                }
+                else
+                    return  new JsonResponse(array("error" => "La modifica non è andata a buon fine"), 403);
+        }
+        throw new UnauthorizedException("Password errata o non si hanno le autorizzazioni necessarie");
+    }
 }

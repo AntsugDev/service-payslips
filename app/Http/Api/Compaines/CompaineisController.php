@@ -12,9 +12,9 @@ use Illuminate\Http\JsonResponse;
 
 class CompaineisController extends Controller
 {
-    public function listUser(User $user,Request $request) {
-        dd($user->get());
-        $list = $user->company($user->first()->code_user)->get();
+    public function listUser(Request $request) {
+        $user = $request->user();
+        $list = $user->company($user->code_user)->get();
         return new JsonResponse((new UserResourceCollection($list))->toArray($request),Response::HTTP_OK);
     }
 
