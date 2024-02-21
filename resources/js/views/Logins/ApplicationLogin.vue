@@ -142,11 +142,11 @@ export default {
     },
     mounted() {
         if(this.$route.query.logout !== undefined){
-            this.alert = this.$route.query.logout
-            setTimeout(() => {
-                this.alert = null
-                this.$router.push({name:'ApplicationLogin'})
-            },10000)
+            this.$store.commit('snackbar/update',{
+                show: true,
+                text: this.$route.query.logout,
+                color: 'info'
+            })
         }
     }
 }

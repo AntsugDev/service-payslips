@@ -15,7 +15,7 @@
         size="small"
         alt="Torna alla login"
         title="Torna alla login"
-        @click="loogut"
+        @click="$router.push({ name: 'ApplicationLogin',query:{logout: 'Logout effettuato'} })"
     >
     </v-btn>
 </template>
@@ -27,17 +27,6 @@ export default {
     name:'BtnLogout',
     props:['logoutMsg'],
     mixins:[storeComputed],
-    data: () => ({
-        router: null,
-    }),
-    methods:{
-        loogut: function (){
-            if(this.logoutMsg === null)
-                this.$router.push({ name: 'ApplicationLogin',query:{logout: 'Logout effettuato'} })
-            else
-                this.$router.push({name:'ApplicationLogin',query:{logout:this.logoutMsg}})
-        }
-    }
 }
 
 </script>
