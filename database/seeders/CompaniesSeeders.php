@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Http\Api\Core\Random;
+use App\Models\City;
 use App\Models\Compaineis;
 use App\Models\User;
 use Carbon\Carbon;
@@ -39,6 +40,7 @@ class CompaniesSeeders
         info("\nINIZIO CREAZIONE COMPAINES....\n");
 
         $this->progressBar->start();
+        $cities =City::all()->pluck('uuid')->toArray();
         for($i = 0 ; $i < $this->len ; $i ++){
 
             $company = fake()->company;
@@ -46,10 +48,10 @@ class CompaniesSeeders
             $compain = Compaineis::create([
                     'uuid' => Str::uuid()->toString(),
                     "name" => $company,
-                    "city" => fake('it-IT')->city,
-                    "address" => fake('it-IT')->address,
+                    "city" => count($cities) > 0 ? $cities[rand(0,count($cities)-1)] : fake()->city,
+                    "address" => explode(',',fake()->address())[0],
                     'email' => $email,
-                    'phone' => fake('it-IT')->phoneNumber
+                    'phone' => fake()->phoneNumber
             ]);
             if($compain instanceof Compaineis){
                  User::create(
@@ -58,11 +60,11 @@ class CompaniesSeeders
                             'name' => $company,
                             'code_user' => Crypt::encryptString($this->generatePIVA()),
                             'password' => Hash::make(trim(strtolower(str_replace('','_',explode('@',$email)[0]))).'.007'),
-                            'pw'=>trim(strtolower(str_replace('','_',explode('@',$email)[0]))).'.007',
                             'password_at' => Carbon::now()->format('d/m/Y H:i:s'),
                             'uuid' => Str::uuid()->toString(),
                             "company_id" => $compain->uuid,
-                            "user_id" => null
+                            "user_id" => null,
+                            'change_password' => false
                         ]
                 );
             }else

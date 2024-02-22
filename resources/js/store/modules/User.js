@@ -44,6 +44,7 @@ const getters = {
             "password_at" : state.data.user.password_at !== null ? state.data.user.password_at : "",
             "created_at" : state.data.user.created_at !== null ? state.data.user.created_at : "",
             "updated_at" : state.data.user.updated_at !== null ? state.data.user.updated_at: "",
+            "change_password" : state.data.user.change_password !== null ? state.data.user.change_password: false,
         }
     },
     getEmailUser:function (state){
@@ -51,6 +52,15 @@ const getters = {
     },
     getRole: function (state){
         return state.data.user.role === 'user'
+    },
+    getCompany: function (state){
+        return state.data.user.company !== null ? state.data.user.company.id : null;
+    },
+    getId: function (state){
+        return state.data.user.id;
+    },
+    getFirstAccess: function (state) {
+        return state.data.user.change_password !== null ? state.data.user.change_password : false
     }
 };
 const actions = {};

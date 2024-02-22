@@ -1,6 +1,5 @@
 <template>
     <v-app>
-        <router-view @userCreated="setUsers" @userEdited="setUsers" @userDeleted="setUsers"></router-view>
         <v-container fluid class="fill-height align-content-start">
             <v-toolbar density="compact" flat color="primary" dark>
                 <v-icon class="ml-2">
@@ -8,7 +7,7 @@
                 </v-icon>
                 <v-toolbar-title>Dettaglio Utente</v-toolbar-title>
                 <v-spacer></v-spacer>
-                <v-btn   depressed color="" @click="$router.push({ name: 'AdminCreateUser' })">
+                <v-btn @reloadPage="reloadPage"  depressed color="" @click="$router.push({ name: 'CreateUser',query:{calling: true} })">
                     <v-icon dark>mdi-plus</v-icon>
                     Crea nuovo
                 </v-btn>
@@ -44,28 +43,38 @@
 
                 <template v-slot:[`item.actions`]="{ item }">
 
-                            <v-btn icon="mdi-lock-reset"
-                                   density="compact"
-                                   color="lime"
-                                   alt="Modifica Password"
-                                   title="Modifica Password"
-                                   @click="$router.push({ name: 'EditPassword', params: { id: item.id } })">
-                            </v-btn>
+                    <v-btn icon="mdi-lock-reset"
+                           density="compact"
+                           color="lime"
+                           alt="Modifica Password"
+                           title="Modifica Password"
+                           @click="$router.push({ name: 'EditPassword', params: { id: item.id } })">
+                    </v-btn>
 
-                            <v-btn icon="mdi-pencil"
-                                   density="compact"
-                                   color="primary"
-                                   alt="Modifica Utenza"
-                                   title="Modifica Utenza"
-                                   @click="$router.push({ name: 'AdminEditUser', params: { id: item.id } })">
-                            </v-btn>
-                            <v-btn
-                                v-if="(item.role === 'user')"
-                                icon="mdi-delete"
-                                density="compact"
-                                color="warning"
-                                @click="$router.push({ name: 'AdminDeleteUser', params: { id: item.id } })">
-                            </v-btn>
+                    <v-btn icon="mdi-pencil"
+                           density="compact"
+                           color="primary"
+                           alt="Modifica Utenza"
+                           title="Modifica Utenza"
+                           @click="$router.push({ name: 'AdminEditUser', params: { id: item.id } })">
+                    </v-btn>
+                    <v-btn
+                        v-if="(item.role === 'user')"
+                        icon="mdi-account-cancel"
+                        density="compact"
+                        color="light-green"
+                        @click="$router.push({ name: 'AdminDeleteUser', params: { id: item.id } })">
+                    </v-btn>
+
+                    <v-btn
+                        v-if="item.company === undefined"
+                        icon="mdi-account-arrow-right"
+                        density="compact"
+                        color="blue-grey"
+                        alt="Entra con questa utenza"
+                        title="Entra con questa utenza"
+                        @click="$router.push({ name: 'AdminDeleteUser', params: { id: item.id } })">
+                    </v-btn>
                 </template>
 
 
@@ -83,14 +92,21 @@ import usersApi from "../../../mixins/UsersApi";
 import moment from 'moment';
 import Companies from "../../../mixins/Companies.js";
 import store from "../../../store/index.js";
+import user from "../../../store/modules/User.js";
 
 export default {
     name: "Users",
+    computed: {
+        user() {
+            return user
+        }
+    },
     mixins: [storeComputed, usersApi,Companies],
     data: () => ({
         getUsersRequest: { loading: false },
         options: {},
         users: [],
+        base64:null,
         role: null,
         headers: [
             { title: "Nome", key: "name" },
@@ -120,18 +136,14 @@ export default {
             this.users = [this.$store.getters['user/getDatiUser']]
         },
         listUserChildren : function (){
-            let role = store.getters['user/getRole']
-            this.role = role
-            if(!role){
-                this.childrenUser().then(r => {
-                    let data = r.data.data;
-                    data.map(e => {
-                        let row = e.user
-                        this.users.push(row)
-                    })
+            this.childrenUser().then(r => {
+                let data = r.data.data;
+                data.map(e => {
+                    let row = e.user
+                    this.users.push(row)
                 })
-            }
-        }
+            })
+        },
     },
     created() {
         this.setUsers();

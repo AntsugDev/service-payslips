@@ -20,6 +20,12 @@ let usersApi = {
         },
         createUser: function (payloadRequest){
             return axiosInstance('/api/create',PUT,payloadRequest)
+        },
+        createChildUser: function (payloadRequest){
+            return axiosInstance('/api/v1/user/create ',PUT,payloadRequest)
+        },
+        generateFiscalCode: function (){
+            return axiosInstance('/api/random/1',GET)
         }
 
     }

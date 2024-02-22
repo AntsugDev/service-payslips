@@ -23,6 +23,7 @@ class EditPasswordUserNew extends FormRequest
     {
         return [
             "password" => "Nuova Password ",
+            "update" => "Aggiornare campo change password"
         ];
     }
 
@@ -35,7 +36,8 @@ class EditPasswordUserNew extends FormRequest
     public function rules(): array
     {
         return [
-            "password" => ['required','string','regex:/^[A-Za-z0-9_*@!$&.]\w+/','min:10', 'max:15']
+            "password" => ['required','string','regex:/^[A-Za-z0-9_*@!$&.]\w+/','min:10', 'max:15'],
+            "update" => ['bool']
         ];
     }
 

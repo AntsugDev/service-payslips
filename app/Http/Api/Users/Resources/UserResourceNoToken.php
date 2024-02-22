@@ -17,13 +17,23 @@ class UserResourceNoToken extends JsonResource
 {
 
 
+    private string|null $firstPassword;
+
+    /**
+     * @param string|null $firstPassword
+     */
+    public function __construct(User $user,?string $firstPassword = null)
+    {
+        parent::__construct($user);
+        $this->firstPassword = $firstPassword;
+    }
 
 
     public function toArray(Request $request): array
     {
-            return [
+            $return = [
                 "user" => [
-                    'id' => $this->resource->id,
+                    'id' => $this->resource->uuid,
                     "name" => $this->resource->name,
                     "code_user" => Crypt::decryptString($this->resource->code_user),
                     "email" => $this->resource->email,
@@ -31,8 +41,13 @@ class UserResourceNoToken extends JsonResource
                     'password_at' => $this->resource->password_at,
                     'created_at' => $this->resource->created_at,
                     'updated_at' => $this->resource->updated_at,
+                    'change_password' =>  $this->resource->change_password,
                 ]
             ];
+            if(!is_null($this->firstPassword))
+                $return['user']['first_access'] = $this->firstPassword;
+
+            return  $return;
 
 
     }

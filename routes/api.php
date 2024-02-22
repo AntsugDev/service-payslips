@@ -22,6 +22,8 @@ Route::middleware('data-request')->group(function (){
     Route::post('/reset/update_password/{uuid}',[Users::class,'reset_password']);
     Route::get('/companies/all',[CompaineisController::class, 'list']);
     Route::put('/create',[EditUser::class, 'store']);
+    Route::get('/random/{type}',[EditUser::class, 'random']);
+    Route::put('/companies/create',[CompaineisController::class, 'store']);
 
 
     Route::middleware('jwt.auth')
@@ -30,6 +32,7 @@ Route::middleware('data-request')->group(function (){
                 Route::get('companies', [CompaineisController::class, 'listUser']);
                 Route::prefix('/user')->group(function (){
                     Route::post('/password/{id}',[EditUser::class,'edit_password']);
+                    Route::put('/create',[EditUser::class,'create_user_child']);
                 });
 
         });

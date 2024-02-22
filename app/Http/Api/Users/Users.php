@@ -19,6 +19,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Testing\Fluent\Concerns\Has;
 use Spatie\FlareClient\Http\Exceptions\NotFound;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
@@ -83,17 +84,28 @@ class Users extends Controller
     {
         if(strcmp($uuid,'') === 0 )
             throw new UnauthorizedException("Procedura non autorizzata");
-
         if($request->validationData()){
+            $actualPassword = User::where('uuid',$uuid)->pluck('password')->toArray();
+            if(count($actualPassword) > 0){
+                $checkPassword  = Hash::check($request->input('password'),$actualPassword[0]);
+                if($checkPassword)
+                    return  new JsonResponse(array("errors" => "La password che si sta cambiando è uguale a quella presente a sistema"), 406);
+            }
+
+            if($request->input('update'))
                 $user = User::where('uuid',$uuid)->update([
-                    'pw'=> $request->input('password'),
+                    'change_password' => false,
+                    'password' => Hash::make($request->input('password')),
+                    'password_at' => Carbon::now()->format('d/m/Y H:i:s')]);
+                else
+                $user = User::where('uuid',$uuid)->update([
                     'password' => Hash::make($request->input('password')),
                     'password_at' => Carbon::now()->format('d/m/Y H:i:s')]);
                 if($user){
                     return  $this->json("Password aggiornata con successo",$uuid);
                 }
                 else
-                    return  new JsonResponse(array("error" => "La modifica non è andata a buon fine"), 403);
+                    return  new JsonResponse(array("errors" => "La modifica non è andata a buon fine"), 403);
         }
         throw new UnauthorizedException("Password errata o non si hanno le autorizzazioni necessarie");
     }

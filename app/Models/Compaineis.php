@@ -27,4 +27,8 @@ class Compaineis extends Model
     {
         return $this->hasMany(User::class,'uuid','company_id');
     }
+
+    public function cities(string $uuid){
+        return City::where('uuid',$uuid)->first();
+    }
 }

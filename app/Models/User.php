@@ -47,6 +47,7 @@ class User extends Model implements Authenticatable,JWTSubject
         'code_user',
         'password',
         'password_at',
+        'change_password',
         'user_id', //user padre uguale a uuid
         'company_id' //la relazione con la tabella companies
     ];

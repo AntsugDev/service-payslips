@@ -26,12 +26,19 @@ const router = createRouter({
                 if (jwt.access_token !== null) {
                     let expired = jwt.expired
                     let now   = moment();
-                   if(expired > now.format('DD/MM/YYYY HH:mm:ss')){
-                       next();
-                   }
-                   else{
-                       next({ name: 'ApplicationLogin',query:{logout: "Session exipred"} });
-                   }
+                    let fisrt_access= store.getters['user/getFirstAccess']
+                    if(expired > now.format('DD/MM/YYYY HH:mm:ss')){
+                        if(!fisrt_access)
+                            next();
+                        else
+                            next({ name: 'ResetPassword',query:{
+                                        email: btoa(store.getters['user/getEmailUser']),
+                                        uuid: btoa(store.getters['user/getId'])
+                                    } })
+                    }
+                    else{
+                        next({ name: 'ApplicationLogin',query:{logout: "Session exipred"} });
+                    }
                 } else {
                     next({ name: 'ApplicationLogin',query:{logout:"Errore in fase di login, autorizzazione negata"} });
                 }

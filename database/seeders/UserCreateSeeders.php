@@ -42,8 +42,11 @@ class UserCreateSeeders
             try {
                 $userPadre = User::whereNull('user_id')->get()->toArray();
                 if(is_array($userPadre) && count($userPadre) > 0) {
-                    $random = $userPadre[rand(0,count($userPadre)-1)];
-                    $email = fake()->email;
+                    $random     = $userPadre[rand(0,count($userPadre)-1)];
+                    $email      = fake()->email;
+                    $uuid       = $random['uuid'];
+                    $companyId  = $random['company_id'];
+
                     User::create(
                             [
                                 'email' => $email,
@@ -51,11 +54,12 @@ class UserCreateSeeders
                                 'code_user' => Crypt::encryptString($this->generateFiscalCode()),
                                 'password' => Hash::make(trim(strtolower(str_replace('', '_', explode('@', $email)[0]))) . '.007'),
                                 'password_at' => Carbon::now()->format('d/m/Y H:i:s'),
-                                'user_id' => $random['uuid'],
-                                'company_id' => null,
+                                'user_id' => $uuid,
+                                'company_id' => $companyId,
                                 'created_at'=> Carbon::now(),
                                 'update_at'=> Carbon::now(),
-                                'uuid' => Str::uuid()->toString()
+                                'uuid' => Str::uuid()->toString(),
+                                'change_password' => false
                             ]
                     );
                 }

@@ -59,7 +59,7 @@
                                             width="100%"
                                             @click="$router.push({name: 'CreateUser'})"
                                             :disabled="loading">
-                                            Crea utenza
+                                            Crea utenza/company
                                         </v-btn></v-col>
                                         <v-col cols="6">
                                             <v-btn
@@ -97,8 +97,8 @@ export default {
         return {
             alert:null,
             valid: true,
-            email: '',
-            password: '',
+            email: 'antonio.sugamele@gmail.com',
+            password: '@AntSug1983@',
             loading: false,
             rules: {
                 email: value => {

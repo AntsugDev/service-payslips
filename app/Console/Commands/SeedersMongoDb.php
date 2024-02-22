@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Compaineis;
 use App\Models\User;
+use Database\Seeders\CitySeeders;
 use Database\Seeders\CompaniesSeeders;
 use Database\Seeders\UserCreateSeeders;
 use Faker\Factory;
@@ -44,12 +45,16 @@ class SeedersMongoDb extends Command
 
         \Laravel\Prompts\info("Inizio creazione collection mongodb...");
         try {
-            $dropDb = $this->anticipate('Vuoi cancellare il db?[s,n]',['s','n']);
+            $dropDb = $this->choice('Vuoi cancellare il db?[s,n]',['s','n']);
 
             if(strcmp($dropDb,'s') === 0){
+                DB::connection('mongodb')->table('cities')->delete();
                 DB::connection('mongodb')->table('users')->delete();
                 DB::connection('mongodb')->table('companies')->delete();
             }
+
+            $cities     = new CitySeeders();
+            $cities->run();
 
             $lenCompainies = $this->ask('Inidica il numero di aziende da inserire');
             $compainesSeeders = new CompaniesSeeders($lenCompainies);

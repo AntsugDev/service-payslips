@@ -7,16 +7,11 @@
                         <v-card class="elevation-12">
                             <SnackBarCommon></SnackBarCommon>
                             <v-toolbar color="primary" dark flat dense>
-                                <BackRoute name-router="ApplicationLogin"></BackRoute>
+                                <BackRoute v-if="!firstAccess" name-router="ApplicationLogin"></BackRoute>
                                 <v-toolbar-title color="secondary" class="font-weight-bold">RESET PASSWORD</v-toolbar-title>
                             </v-toolbar>
                             <v-card-text>
                                 <v-container>
-                                    <v-row v-if="error !== null">
-                                        <v-col cols="12" class="py-0">
-                                            <v-alert color="warning">{{error}}</v-alert>
-                                        </v-col>
-                                    </v-row>
                                     <v-row>
                                         <v-col cols="12" class="py-0">
                                             <v-stepper
@@ -47,6 +42,13 @@
                                                         </v-form>
                                                     </v-stepper-window-item>
                                                     <v-stepper-window-item value="1" >
+                                                        <v-row >
+                                                            <v-col cols="12">
+                                                                <v-chip prepend-icon="mdi-email-check-outline" color="info" variant="elevated">
+                                                                    {{ email }}
+                                                                </v-chip>
+                                                            </v-col>
+                                                        </v-row>
                                                         <PasswordComponent
                                                             :form="form"
                                                             :loading="getUsersRequest.loading"
@@ -87,6 +89,7 @@ export default {
     data: () => ({
         items: ['Email','Password'],
         email: '',
+        firstAccess: false,
         step: {
             validStep1: false,
             validStep2:false,
@@ -106,7 +109,8 @@ export default {
         error: null,
         form : {
             password: '',
-            confirmPassword: ''
+            confirmPassword: '',
+            update:false
         },
         getUsersRequest: { loading: false },
         show:{
@@ -147,9 +151,7 @@ export default {
                     }).catch(e => {
                         let error = e.response.data.errors
                         if(error !== undefined) {
-                            this.error = error
                             this.progress = false;
-                            this.closeAlert()
                         }
                     })
 
@@ -174,6 +176,13 @@ export default {
         this.step.next = 0;
         this.step.validStep1 = false;
         this.email = '';
+        if(this.$route.query.email !== undefined && this.$route.query.uuid !== undefined){
+            this.firstAccess = true;
+            this.step.next =1;
+            this.uuid  = atob(this.$route.query.uuid)
+            this.email = atob(this.$route.query.email)
+            this.form.update = true
+        }
 
     }
 }

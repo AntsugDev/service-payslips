@@ -33,7 +33,7 @@ class UserResource extends JsonResource
         parent::__construct($user);
         $this->accessToken = $accessToken;
         if(is_string($accessToken))
-        $this->jwt = array("access_token" => $accessToken,"expired" => Carbon::now()->addHours()->format('d/m/Y H:i:s'));
+            $this->jwt = array("access_token" => $accessToken,"expired" => Carbon::now()->addHours()->format('d/m/Y H:i:s'));
         else
             $this->jwt = is_null($this->accessToken) ? [] : $this->accessToken;
 
@@ -50,34 +50,42 @@ class UserResource extends JsonResource
 //        $claims['access_token'] = $this->accessToken;
 
 
-            return [
-                "user" => [
-                    'id' => $this->resource->id,
-                    'uuid' => $this->resource->uuid,
-                    "name" => $this->resource->name,
-                    "code_user" => Crypt::decryptString($this->resource->code_user),
-                    "email" => $this->resource->email,
-                    "isAuthenticated" => !is_null($this->accessToken),
-                    "role" => is_null($this->resource->user_id) ? 'company' : 'user',
-                    "jwt" => $this->jwt,
-                    "company_id" => $this->resource->company_id,
-                    "user_id" => $this->resource->user_id,
-                    "company" => $this->when(in_array('company', $this->queryString), function () use ($request) {
-                        try {
-                            $companies = Compaineis::where('uuid', $this->resource->company_id)->first();
-                            if ($companies instanceof Compaineis)
-                                return (new CompainesResources($companies))->toArray($request)['company'];
-                            return null;
-                        } catch (ModelNotFoundException|\Exception $e) {
-                            return new JsonResponse(array("errors" => "Exception Resource: " . $e->getFile() . ':' . $e->getLine() . ' ' . $e->getMessage()), Response::HTTP_UNPROCESSABLE_ENTITY);
-                        }
+        return [
+            "user" => [
+                'id' => $this->resource->uuid,
+                "name" => $this->resource->name,
+                "code_user" => Crypt::decryptString($this->resource->code_user),
+                "email" => $this->resource->email,
+                "isAuthenticated" => !is_null($this->accessToken),
+                "role" => is_null($this->resource->user_id) ? 'company' : 'user',
+                "jwt" => $this->jwt,
+                "company_id" => $this->resource->company_id,
+                "user_id" => $this->resource->user_id,
+                "company" => $this->when(in_array('company', $this->queryString), function () use ($request) {
+                    try {
 
-                    }),
-                    'password_at' => $this->resource->password_at,
-                    'created_at' => $this->resource->created_at,
-                    'updated_at' => $this->resource->updated_at,
-                ]
-            ];
+                        $companies = null;
+                        if(!is_null($this->resource->company_id)){
+                            $companies = Compaineis::where('uuid', $this->resource->company_id)->first();
+                        } else if(!is_null($this->resource->user_id)) {
+                            $companyId = User::where('uuid',$this->resource->user_id)->pluck('company_id')->toArray();
+                            if(count($companyId) > 0)
+                                $companies = Compaineis::where('uuid', $companyId[0])->first();
+                        }
+                        if ($companies instanceof Compaineis)
+                            return (new CompainesResources($companies))->toArray($request)['company'];
+                        return null;
+                    } catch (ModelNotFoundException|\Exception $e) {
+                        return new JsonResponse(array("errors" => "Exception Resource: " . $e->getFile() . ':' . $e->getLine() . ' ' . $e->getMessage()), Response::HTTP_UNPROCESSABLE_ENTITY);
+                    }
+
+                }),
+                'password_at' => $this->resource->password_at,
+                'created_at' => $this->resource->created_at,
+                'updated_at' => $this->resource->updated_at,
+                'change_password' =>  $this->resource->change_password,
+            ]
+        ];
 
 
     }
