@@ -15,18 +15,18 @@
                         <v-container>
                             <v-row>
                                 <v-col cols="12" class="py-0">
-                                    <v-tabs
+                                    <v-tabs v-if="!calling"
                                         fixed-tabs
                                         bg-color="indigo-lighten-1"
                                     >
-                                        <v-tab v-for="(e,i) in tabs" :key="i" :value="i" @click="changeTab(i)">{{e}}</v-tab>
+                                        <v-tab v-for="(e,i) in tabs" :key="i" :value="i" @click="changeTab(i)" >{{e}}</v-tab>
                                     </v-tabs>
                                     <v-spacer></v-spacer>
                                     <v-divider></v-divider>
                                     <v-spacer></v-spacer>
 
                                     <v-window v-model="tab">
-                                        <v-window-item v-if="tab === 0"
+                                        <v-window-item
                                             value="0"
                                         >
                                             <v-form ref="formCreateUser" :v-model="valid">
@@ -65,11 +65,11 @@
                                             </v-form>
 
                                         </v-window-item>
-
-                                        <v-window-item v-if="tab === 1"
+                                        <v-window-item
+                                            v-if="!calling"
                                             value="1"
                                         >
-                                            cazzo
+                                            <CreateCompany ref="CreateCompanyForm"></CreateCompany>
                                         </v-window-item>
                                     </v-window>
 
@@ -80,11 +80,9 @@
                     <v-divider dark></v-divider>
                     <v-card-actions >
                         <v-spacer></v-spacer>
-
                         <v-btn v-if="calling" color="info" variant="outlined" :disabled="loading" @click="$router.push({name:'UserIndex'})">
                             Chiudi
                         </v-btn>
-
                         <v-progress-circular indeterminate color="dark" v-if="loading"></v-progress-circular>
                         <v-btn color="success" variant="outlined" :disabled="loading" @click="creaUser">
                             Crea
@@ -104,10 +102,11 @@ import Companies from "../../../mixins/Companies.js";
 import UsersApi from "../../../mixins/UsersApi.js";
 import BackRoute from "../../Common/BackRoute.vue";
 import SnackBarCommon from "../../Common/SnackBarCommon.vue";
+import CreateCompany from "./CreateCompany.vue";
 
 export default {
     name: 'CreateUser',
-    components: {SnackBarCommon, BackRoute},
+    components: {CreateCompany, SnackBarCommon, BackRoute},
     mixins:[storeComputed,Companies,UsersApi],
     data:() => ({
         dialog:true,
@@ -160,35 +159,57 @@ export default {
         },
         creaUser: function () {
             this.loading = true;
-            this.$refs.formCreateUser.validate().then(r => {
-                if(r.valid){
-                    console.log('caaa',this.calling)
-                    if(!this.calling){
-                        delete this.form.confirmPassword;
-                        this.createUser(this.form).then(r => {
-                            this.$router.push({name:'ApplicationLogin',query:{logout: "Utente creato correttamente"}})
-                            this.loading = false;
-                        }).catch(e => {
-                            this.loading = false;
-                        })
-                    }else{
-                        let payload = {
-                            email: this.form.email,
-                            code_user: this.form.code_user,
-                            name: this.form.name
+            if(this.tab === 0) {
+
+                this.$refs.formCreateUser.validate().then(r => {
+                    if(r.valid){
+
+                        if(!this.calling){
+                            console.log('caaaa',this.tab)
+
+                            delete this.form.confirmPassword;
+                            this.createUser(this.form).then(r => {
+                                this.$router.push({
+                                    name: 'ApplicationLogin',
+                                    query: {logout: "Utente creato correttamente"}
+                                })
+                                this.loading = false;
+                            }).catch(e => {
+                                this.loading = false;
+                            })
+                        }else{
+                            let payload = {
+                                email: this.form.email,
+                                code_user: this.form.code_user,
+                                name: this.form.name
+                            }
+                            this.createChildUser(payload).then(r => {
+                                this.loading = false;
+                                this.$router.push({name:'UserIndex',query:{esito: "ok"}})
+
+                            }).catch(e => {
+                                this.loading = false;
+                            })
                         }
-                        this.createChildUser(payload).then(r => {
-                            this.loading = false;
-                            this.$router.push({name:'UserIndex',query:{esito: "ok"}})
 
-                        }).catch(e => {
-                            this.loading = false;
+                    }else
+                        this.loading = false;
+                })
+
+            }else{
+                if(this.$refs.CreateCompanyForm.valid){
+                    this.createCompany(this.$refs.CreateCompanyForm.form).then(r =>{
+                        this.loading = false;
+                        this.$router.push({
+                            name: 'ApplicationLogin',
+                            query: {logout: "Utente e Company create correttamente"}
                         })
-                    }
+                    }).catch(e => {
+                        this.loading = false;
+                    })
+                }
+            }
 
-                }else
-                    this.loading = false;
-            })
         },
         randomFiscalCode: function (){
             this.generateFiscalCode().then(r => {

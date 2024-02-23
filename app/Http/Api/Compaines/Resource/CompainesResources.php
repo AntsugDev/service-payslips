@@ -3,20 +3,21 @@
 namespace App\Http\Api\Compaines\Resource;
 
 use App\Models\City;
-use http\QueryString;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CompainesResources extends JsonResource
 {
 
-    private string $queryString;
+    private array $queryString = [];
 
     public function __construct($resource)
     {
         parent::__construct($resource);
-        parse_str(request()->getQueryString(),$this->queryString);
-        $this->queryString = array_values($this->queryString);
+        if(!is_null(request()->getQueryString())) {
+            parse_str(request()->getQueryString(), $this->queryString);
+            $this->queryString = array_values($this->queryString);
+        }
     }
 
 

@@ -1,4 +1,4 @@
-import {axiosInstance, GET} from "../plugins/instance.api.js";
+import {axiosInstance, GET,PUT} from "../plugins/instance.api.js";
 
 const Companies = {
     methods: {
@@ -7,6 +7,12 @@ const Companies = {
         },
         childrenUser:function (){
             return axiosInstance('/api/v1/companies',GET)
+        },
+        listCities:function (){
+            return axiosInstance('/api/cities',GET)
+        },
+        createCompany: function (payloadRequest){
+            return axiosInstance('/api/companies/create',PUT,payloadRequest)
         }
 
     }

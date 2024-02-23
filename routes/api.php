@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Api\Cities\CitiesController;
 use App\Http\Api\Compaines\CompaineisController;
 use App\Http\Api\Users\EditUser;
 use App\Http\Api\Users\Users;
@@ -24,16 +25,16 @@ Route::middleware('data-request')->group(function (){
     Route::put('/create',[EditUser::class, 'store']);
     Route::get('/random/{type}',[EditUser::class, 'random']);
     Route::put('/companies/create',[CompaineisController::class, 'store']);
-
+    Route::get('/cities', [CitiesController::class, 'index']);
 
     Route::middleware('jwt.auth')
         ->prefix('v1')
         ->group(function (){
-                Route::get('companies', [CompaineisController::class, 'listUser']);
-                Route::prefix('/user')->group(function (){
-                    Route::post('/password/{id}',[EditUser::class,'edit_password']);
-                    Route::put('/create',[EditUser::class,'create_user_child']);
-                });
+            Route::get('companies', [CompaineisController::class, 'listUser']);
+            Route::prefix('/user')->group(function (){
+                Route::post('/password/{id}',[EditUser::class,'edit_password']);
+                Route::put('/create',[EditUser::class,'create_user_child']);
+            });
 
         });
 

@@ -24,8 +24,9 @@ let usersApi = {
         createChildUser: function (payloadRequest){
             return axiosInstance('/api/v1/user/create ',PUT,payloadRequest)
         },
-        generateFiscalCode: function (){
-            return axiosInstance('/api/random/1',GET)
+        generateFiscalCode: function (state){
+            let path = '/api/random/' + (state === undefined ? 1 : state)
+            return axiosInstance(path,GET)
         }
 
     }
