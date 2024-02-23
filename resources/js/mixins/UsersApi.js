@@ -4,7 +4,7 @@ import {axiosInstance, GET, POST, PUT} from "../plugins/instance.api.js";
 let usersApi = {
     methods: {
         loginEnter: function (payloadRequestUser){
-            return axiosInstance('/api/oauth',POST,payloadRequestUser,['company'])
+            return axiosInstance('/api/oauth',POST,payloadRequestUser,['company','get_role'])
         },
         changePassword: function (payloadRequestUser, id){
             let path = '/api/v1/user/password/'+id

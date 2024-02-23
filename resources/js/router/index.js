@@ -13,6 +13,8 @@ import UsersIndex from "../views/Admin/Users/UsersIndex.vue";
 import EditPassword from "../views/Admin/Users/EditPassword.vue";
 import ResetPassword from "../views/Admin/Users/ResetPassword.vue";
 import CreateUser from "../views/Admin/Users/CreateUser.vue";
+import ListUser from "../views/Admin/ListUser.vue";
+import ChangeCompany from "../views/Admin/Company/ChangeCompany.vue";
 
 const router = createRouter({
     history: createWebHistory(store.getters['config/appBasePath']),
@@ -57,7 +59,22 @@ const router = createRouter({
                             name:'EditPassword',
                             component: EditPassword
                         },
+                        {
+                            path:'admin',
+                            name:'ListUser',
+                            component: ListUser
+                        },
 
+                    ]
+                },
+                {
+                    path:'company',
+                    children:[
+                        {
+                            path:'change/:id',
+                            component:ChangeCompany,
+                            name: 'ChangeCompany'
+                        }
                     ]
                 }
             ]

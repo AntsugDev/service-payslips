@@ -1,13 +1,14 @@
 <template>
+
     <v-app>
         <v-container fluid class="fill-height align-content-start">
             <v-toolbar density="compact" flat color="primary" dark>
                 <v-icon class="ml-2">
-                    mdi-account
+                    mdi-account-group
                 </v-icon>
-                <v-toolbar-title>Dettaglio Utente</v-toolbar-title>
+                <v-toolbar-title>Lista Utenti</v-toolbar-title>
                 <v-spacer></v-spacer>
-                <v-btn @reloadPage="reloadPage"  depressed color="" @click="$router.push({ name: 'CreateUser',query:{calling: true,route:'UserIndex'} })">
+                <v-btn   depressed color="" @click="$router.push({ name: 'CreateUser',query:{calling: true,route:'ListUser'} })">
                     <v-icon dark>mdi-plus</v-icon>
                     Crea nuovo
                 </v-btn>
@@ -16,17 +17,15 @@
             <v-data-table
                 loading-text="Caricamento in corso..."
                 class="elevation-1"
-                :loading="getUsersRequest.loading"
+                :loading="loading"
                 :headers="headers"
-                :items="users">
+                :items="usersList">
 
                 <template v-slot:[`item.role`]="{ item }">
                     <v-btn small dark :color="roleColor(item.role)">
                         {{ item.role }}
                     </v-btn>
                 </template>
-
-
 
                 <template v-slot:[`item.created_at`]="{ item }">
                     {{ item.created_at !== null ? formatDate(item.created_at) : ""}}
@@ -38,39 +37,28 @@
 
                 <template v-slot:[`item.actions`]="{ item }" v-if="!admin">
 
-                    <v-btn icon="mdi-lock-reset"
-                           density="compact"
-                           color="lime"
-                           alt="Modifica Password"
-                           title="Modifica Password"
-                           @click="$router.push({ name: 'EditPassword', params: { id: item.id } })">
+
+                    <v-btn
+                        icon="mdi-domain"
+                        density="compact"
+                        color="light-green-darken-1"
+                        alt="Assegna/Modifica Azienda"
+                        title="Assegna/Modifica Azienda"
+                        @click="$router.push({ name: 'ChangeCompany', params: { id: item.id } })">
                     </v-btn>
 
-                    <v-btn icon="mdi-pencil"
-                           density="compact"
-                           color="primary"
-                           alt="Modifica Utenza"
-                           title="Modifica Utenza"
-                           @click="$router.push({ name: 'AdminEditUser', params: { id: item.id } })">
-                    </v-btn>
                     <v-btn
-                        v-if="(item.role === 'user')"
                         icon="mdi-account-cancel"
                         density="compact"
-                        color="light-green"
+                        color="deep-orange-darken-3"
+                        alt="Cancella Utente"
+                        title="Cancella Utente"
                         @click="$router.push({ name: 'AdminDeleteUser', params: { id: item.id } })">
                     </v-btn>
 
-                    <v-btn
-                        v-if="item.company === undefined"
-                        icon="mdi-account-arrow-right"
-                        density="compact"
-                        color="blue-grey"
-                        alt="Entra con questa utenza"
-                        title="Entra con questa utenza"
-                        @click="$router.push({ name: 'AdminDeleteUser', params: { id: item.id } })">
-                    </v-btn>
+
                 </template>
+
 
 
             </v-data-table>
@@ -79,31 +67,18 @@
 
         </v-container>
     </v-app>
-</template>
 
+</template>
 <script>
-import storeComputed from "../../../mixins/storeComputed";
-import usersApi from "../../../mixins/UsersApi";
-import moment from 'moment';
-import Companies from "../../../mixins/Companies.js";
-import store from "../../../store/index.js";
-import user from "../../../store/modules/User.js";
+import moment from "moment/moment.js";
+import AdminApi from "../../mixins/AdminApi.js";
 
 export default {
-    name: "Users",
-    computed: {
-        user() {
-            return user
-        }
-    },
-    mixins: [storeComputed, usersApi,Companies],
+    name: 'ListUser',
+    mixins:[AdminApi],
     data: () => ({
-        getUsersRequest: { loading: false },
-        options: {},
-        users: [],
-        base64:null,
-        role: null,
-        admin:false,
+        loading:false,
+        usersList:[],
         headers: [
             { title: "Nome", key: "name" },
             { title: "Codice Fiscale/PIVA", key: "code_user" },
@@ -115,9 +90,8 @@ export default {
             { title: "Password modificata il", key: "password_at" },
             { title: "Azioni", key: "actions", cellClass: 'text-no-wrap' }
         ],
-
     }),
-    methods: {
+    methods:{
         roleColor: function (value) {
             if (value === 'User') {
                 return "indigo-lighten-3";
@@ -134,26 +108,28 @@ export default {
         formatDate(value) {
             return moment(value).format("DD/MM/YYYY HH:mm:ss");
         },
-        setUsers: function () {
-            this.users = [this.$store.getters['user/getDatiUser']]
-        },
-        listUserChildren : function (){
-            this.childrenUser().then(r => {
+        listAllUsers:function (){
+            this.listAllAdmin().then(r => {
                 let data = r.data.data;
                 data.map(e => {
                     let row = e.user
-                    this.users.push(row)
+                    this.usersList.push({
+                        id:row.id,
+                        name: row.name,
+                        code_user: row.code_user,
+                        email:row.email,
+                        role:row.role,
+                        company:row.company !== null ? row.company.name: null,
+                        created_at:row.created_at,
+                        updated_at:row.updated_at,
+                        password_at:row.password_at
+                    })
                 })
             })
-        },
-
+        }
     },
     created() {
-        this.setUsers();
-        this.listUserChildren()
-        if(store.getters['user/getAdmin']){
-            this.admin = true
-        }
+        this.listAllUsers();
     }
 }
 </script>

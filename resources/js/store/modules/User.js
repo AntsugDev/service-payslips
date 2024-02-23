@@ -61,6 +61,9 @@ const getters = {
     },
     getFirstAccess: function (state) {
         return state.data.user.change_password !== null ? state.data.user.change_password : false
+    },
+    getAdmin: function (state){
+        return state.data.user.role === 'Admin'
     }
 };
 const actions = {};

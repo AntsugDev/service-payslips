@@ -21,10 +21,10 @@
             <v-card-actions >
                 <v-spacer></v-spacer>
                 <v-progress-circular indeterminate color="dark" v-if="getUsersRequest.loading"></v-progress-circular>
-                <v-btn :disabled="getUsersRequest.loading" color="primary" @click="$router.push({ name: 'UserIndex' })">
+                <v-btn :disabled="getUsersRequest.loading" color="info" variant="outlined" @click="$router.push({ name: 'UserIndex' })">
                     chiudi
                 </v-btn>
-                <v-btn color="primary" :disabled="getUsersRequest.loading" @click="modifiedPassword">
+                <v-btn color="success" variant="outlined"  :disabled="getUsersRequest.loading" @click="modifiedPassword">
                     modifica
                 </v-btn>
             </v-card-actions>

@@ -8,6 +8,7 @@ use App\Http\Api\Core\UserTrait;
 use App\Http\Api\Users\Resources\UserResourceCollection;
 use App\Http\Controllers\Controller;
 use App\Models\Compaineis;
+use App\Models\Role;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Response;
@@ -53,7 +54,7 @@ class CompaineisController extends Controller
                 ]
             );
             if($company instanceof  Compaineis){
-
+                $role                    = Role::where('name','Company')->pluck('uuid');
                 $user = User::create([
                     'uuid' =>Str::uuid()->toString() ,
                     'email' => $email,
@@ -63,7 +64,8 @@ class CompaineisController extends Controller
                     'password_at' => Carbon::now()->format('d/m/Y H:i:s'),
                     'change_password' => false,
                     'user_id' => null,
-                    'company_id' => $company->uuid
+                    'company_id' => $company->uuid,
+                    'role_id' => count($role) > 0 ? $role[0] : null
                 ]);
 
                 if($user instanceof  User)

@@ -34,6 +34,8 @@ Route::middleware('data-request')->group(function (){
             Route::prefix('/user')->group(function (){
                 Route::post('/password/{id}',[EditUser::class,'edit_password']);
                 Route::put('/create',[EditUser::class,'create_user_child']);
+                Route::get('/admin',[EditUser::class,'admin']);
+                Route::get('/admin/{user_id}',[EditUser::class,'user_details']);
             });
 
         });

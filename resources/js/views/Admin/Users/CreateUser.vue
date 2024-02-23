@@ -80,7 +80,7 @@
                     <v-divider dark></v-divider>
                     <v-card-actions >
                         <v-spacer></v-spacer>
-                        <v-btn v-if="calling" color="info" variant="outlined" :disabled="loading" @click="$router.push({name:'UserIndex'})">
+                        <v-btn v-if="calling" color="info" variant="outlined" :disabled="loading" @click="$router.push({name:$route.query.route})">
                             Chiudi
                         </v-btn>
                         <v-progress-circular indeterminate color="dark" v-if="loading"></v-progress-circular>
@@ -103,6 +103,8 @@ import UsersApi from "../../../mixins/UsersApi.js";
 import BackRoute from "../../Common/BackRoute.vue";
 import SnackBarCommon from "../../Common/SnackBarCommon.vue";
 import CreateCompany from "./CreateCompany.vue";
+import {th} from "vuetify/locale";
+import store from "../../../store/index.js";
 
 export default {
     name: 'CreateUser',
@@ -165,8 +167,6 @@ export default {
                     if(r.valid){
 
                         if(!this.calling){
-                            console.log('caaaa',this.tab)
-
                             delete this.form.confirmPassword;
                             this.createUser(this.form).then(r => {
                                 this.$router.push({
@@ -181,11 +181,12 @@ export default {
                             let payload = {
                                 email: this.form.email,
                                 code_user: this.form.code_user,
-                                name: this.form.name
+                                name: this.form.name,
+                                type: this.$store.getters['user/getAdmin'] ? 'admin' : 'others'
                             }
                             this.createChildUser(payload).then(r => {
                                 this.loading = false;
-                                this.$router.push({name:'UserIndex',query:{esito: "ok"}})
+                                this.$router.push({name:this.$route.query.route,query:{esito: "ok"}})
 
                             }).catch(e => {
                                 this.loading = false;

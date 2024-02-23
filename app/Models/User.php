@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Laravel\Sanctum\HasApiTokens;
 use MongoDB\Laravel\Eloquent\Model;
@@ -49,7 +50,8 @@ class User extends Model implements Authenticatable,JWTSubject
         'password_at',
         'change_password',
         'user_id', //user padre uguale a uuid
-        'company_id' //la relazione con la tabella companies
+        'company_id' ,//la relazione con la tabella companies
+        'role_id'
     ];
 
     public function getRememberToken()
@@ -88,10 +90,17 @@ class User extends Model implements Authenticatable,JWTSubject
         return User::where('user_id',$uuid)->get();
     }
 
+    public function details_company(){
+        return $this->belongsTo(Compaineis::class,'company_id','uuid');
+    }
+
     public function checkId (string $id){
         return User::where('id',$id)->count() > 0;
     }
 
+    public function get_role(){
+        return $this->belongsTo(Role::class,'role_id','uuid')->pluck('name');
+    }
 
 
 

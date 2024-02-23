@@ -26,6 +26,7 @@ class UserRequestCreateChild extends FormRequest
             "email" => "Email ",
             "code_user" => "Codice utente ",
             "name" => "Anagrafica utente ",
+            "type" => ""
         ];
     }
 
@@ -43,6 +44,7 @@ class UserRequestCreateChild extends FormRequest
             "email" => ['required','email'],
             "code_user" => ['required','string','min:10','max:17','regex:/[A-Za-z0-9]/'],
             "name" => ['required','string'],
+            "type" => ['string']
         ];
     }
 

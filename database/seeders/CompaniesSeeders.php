@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Http\Api\Core\Random;
 use App\Models\City;
 use App\Models\Compaineis;
+use App\Models\Role;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Crypt;
@@ -54,6 +55,8 @@ class CompaniesSeeders
                     'phone' => fake()->phoneNumber
             ]);
             if($compain instanceof Compaineis){
+
+                 $role = Role::where('name','Company')->pluck('uuid')->toArray();
                  User::create(
                         [
                             'email' => $email,
@@ -64,7 +67,8 @@ class CompaniesSeeders
                             'uuid' => Str::uuid()->toString(),
                             "company_id" => $compain->uuid,
                             "user_id" => null,
-                            'change_password' => false
+                            'change_password' => false,
+                            "role_id"=>count($role) > 0 ? $role[0] : null
                         ]
                 );
             }else

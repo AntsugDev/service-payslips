@@ -39,16 +39,13 @@ class UserResource extends JsonResource
 
         if(stristr(request()->getQueryString(),'includes') !== false){
             parse_str(request()->getQueryString(),$this->queryString);
+            $this->queryString = explode(',',$this->queryString['includes']);
         }
-        $this->queryString = array_values($this->queryString);
     }
 
 
     public function toArray(Request $request): array
     {
-//        $claims = $this->resource->getJWTCustomClaims();
-//        $claims['access_token'] = $this->accessToken;
-
 
         return [
             "user" => [
@@ -57,7 +54,11 @@ class UserResource extends JsonResource
                 "code_user" => Crypt::decryptString($this->resource->code_user),
                 "email" => $this->resource->email,
                 "isAuthenticated" => !is_null($this->accessToken),
-                "role" => is_null($this->resource->user_id) ? 'company' : 'user',
+                "role" => $this->when(in_array('get_role', $this->queryString),function () use($request)
+                {
+                    $role = $this->resource->get_role();
+                    return count($role) > 0 ? $role[0] : null;
+                }),
                 "jwt" => $this->jwt,
                 "company_id" => $this->resource->company_id,
                 "user_id" => $this->resource->user_id,

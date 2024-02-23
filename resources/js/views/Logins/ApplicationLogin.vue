@@ -97,8 +97,8 @@ export default {
         return {
             alert:null,
             valid: true,
-            email: 'antonio.sugamele@gmail.com',
-            password: '@AntSug1983@',
+            email: 'admin@amministratore.it',
+            password: 'admin.007@',
             loading: false,
             rules: {
                 email: value => {
@@ -127,7 +127,7 @@ export default {
                     this.loading = false;
                     let response = res.data
                     this.$store.commit('user/create',response)
-                    this.$router.push({name:'Home'});
+                    this.$router.push({name:'UserIndex'});
                 }).catch(e =>{
                         this.loading = false;
                     }

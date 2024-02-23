@@ -13,7 +13,8 @@ const Companies = {
         },
         createCompany: function (payloadRequest){
             return axiosInstance('/api/companies/create',PUT,payloadRequest)
-        }
+        },
+
 
     }
 }
