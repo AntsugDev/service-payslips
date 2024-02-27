@@ -8,36 +8,44 @@
             :clipped="true"
             :mini-variant.sync="mini"
             permanent
-            flat>
-            <v-list dense dark>
-                <template v-for="item in drawerItems">
-                    <v-list-item v-if="item.children.length === 0" :key="item.text" :to="{ name: item.routeName }">
-                        <v-list-item-content>
-                            <v-icon size="small">{{item.icon}}</v-icon>&nbsp;<span style="vertical-align: bottom">{{ item.text }}</span>
+            flat
+        >
+            <v-divider></v-divider>
+
+            <v-list dense>
+                <template v-for="(item, index) in items" :key="index">
+                    <v-list-item  link v-if="item.children">
+                        <v-list-item-content >
+                            <v-list-item-title>{{ item.text }}</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
-                    <!--                    <v-list-group v-else :key="item.text" v-model="item.active" :prepend-icon="item.icon" color="white">-->
-                    <!--                        <template v-slot:activator>-->
-                    <!--                            <v-list-item-content>-->
-                    <!--                                <v-list-item-title v-text="item.text" class="white&#45;&#45;text font-weight-bold text-wrap">-->
-                    <!--                                </v-list-item-title>-->
-                    <!--                            </v-list-item-content>-->
-                    <!--                        </template>-->
-                    <!--                        <v-list-item v-for="child in item.children" :key="child.text" ripple link-->
-                    <!--                                     :to="{ name: child.routeName }">-->
-                    <!--                            <v-list-item-content>-->
-                    <!--                                <v-list-item-title v-text="child.text" class="white&#45;&#45;text text-wrap"></v-list-item-title>-->
-                    <!--                            </v-list-item-content>-->
-                    <!--                        </v-list-item>-->
-                    <!--                    </v-list-group>-->
+                    <v-list-group v-else>
+                        <template v-slot:activator>
+                            <v-list-item-content>
+                                <v-list-item-title>{{ item.text }}</v-list-item-title>
+                            </v-list-item-content>
+                        </template>
+
+                        <v-list-item v-for="(child, childIndex) in item.children" :key="childIndex" link>
+                            <v-list-item-content>
+                                <v-list-item-title>{{ child.text }}</v-list-item-title>
+                            </v-list-item-content>
+                        </v-list-item>
+                    </v-list-group>
+
                 </template>
             </v-list>
+
+
+
+
+
         </v-navigation-drawer>
 
 
         <v-app-bar app color="primary" :clipped-left="true" class="elevation-1">
             <v-app-bar-nav-icon @click.stop="$store.commit('config/changeDrawer')" class="primary white--text"></v-app-bar-nav-icon>
-            <v-toolbar-title class="white--text text-uppercase font-weight-bold">Service PaySlips</v-toolbar-title>
+            <v-toolbar-title>Service PaySlips</v-toolbar-title>
             <v-spacer></v-spacer>
             <BtnLogout></BtnLogout>
         </v-app-bar>
@@ -64,7 +72,17 @@ export default {
     data: () => ({
         mini: false,
         userMenu: false,
-        drawerItems: Menu()
+        drawerItems: Menu(),
+        items: [
+            { text: 'Dashboard' },
+            {
+                text: 'Menu with Submenu',
+                children: [
+                    { text: 'Submenu Item 1' },
+                    { text: 'Submenu Item 2' }
+                ]
+            },
+        ]
     }),
     methods: {
         logout: function () {

@@ -3,6 +3,7 @@
 namespace App\Http\Api\Compaines\Resource;
 
 use App\Models\City;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -23,6 +24,9 @@ class CompainesResources extends JsonResource
 
     public function toArray(Request $request): array
     {
+
+
+
         return [
           "company" => [
               "id" => $this->resource->uuid,
@@ -36,7 +40,8 @@ class CompainesResources extends JsonResource
                       return (new CitiesResources($list))->toArray($request);
 
                   return null;
-              })
+              }),
+              "user_count" => User::where('company_id',$this->resource->uuid)->where('email','!=',$this->resource->email)->count(),
           ]
         ];
     }

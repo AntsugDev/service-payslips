@@ -82,4 +82,18 @@ class CompaineisController extends Controller
 
     }
 
+    public function update_company_user(Request $request, string $user_id, string $company_id):JsonResponse|null
+    {
+        $user      = $request->user();
+        $admin     = strcmp($user->name,'Admin') === 0;
+        if($admin){
+            User::where('uuid',$user_id)->update(['company_id' => $company_id, 'updated_at' => Carbon::now()->format('Y-m-d H:i:s')]);
+            return  $this->json("Aggiornamento avvenuto con successo");
+        }else
+            return  new JsonResponse(array("errors" => "Utente non autorizzato alla richiesta"), 401);
+
+        return  new JsonResponse(array("errors" => "Errore generico"), 500);
+
+    }
+
 }

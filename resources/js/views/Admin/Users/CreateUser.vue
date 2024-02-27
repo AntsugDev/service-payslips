@@ -15,63 +15,32 @@
                         <v-container>
                             <v-row>
                                 <v-col cols="12" class="py-0">
-                                    <v-tabs v-if="!calling"
-                                        fixed-tabs
-                                        bg-color="indigo-lighten-1"
-                                    >
-                                        <v-tab v-for="(e,i) in tabs" :key="i" :value="i" @click="changeTab(i)" >{{e}}</v-tab>
-                                    </v-tabs>
-                                    <v-spacer></v-spacer>
-                                    <v-divider></v-divider>
-                                    <v-spacer></v-spacer>
 
-                                    <v-window v-model="tab">
-                                        <v-window-item
-                                            value="0"
-                                        >
-                                            <v-form ref="formCreateUser" :v-model="valid">
-                                                <v-text-field :disabled="loading" color="primary" label="email" name="email" v-model="form.email" :rules="[value => !!value || 'Campo Obbligatorio', rules.email]" type="email"></v-text-field>
-                                                <v-text-field :disabled="loading" color="primary" label="cf/piva" name="code_user" v-model="form.code_user" :rules="[value => !!value || 'Campo Obbligatorio',rules.cf_piva]" type="email" append-icon="mdi-smart-card" @click:append="randomFiscalCode"></v-text-field>
-                                                <v-text-field :disabled="loading" color="primary" label="anagrafica" name="name"  v-model="form.name"  :rules="[value => !!value || 'Campo Obbligatorio']" type="email"></v-text-field>
-                                                <template v-if="!calling">
-                                                    <v-text-field  v-model="form.password" :disabled="loading" :rules="[value => !!value || 'Campo obbligatorio']"  label="Password"
-                                                                   :type="show.newPassword ? 'text' : 'password'"
-                                                                   :append-icon="show.newPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                                                                   @click:append="show.newPassword = !show.newPassword"
-                                                    ></v-text-field>
-                                                    <v-text-field
-                                                        v-model="form.confrimPassword"
-                                                        :disabled="loading"
-                                                        :rules="[value => !!value || 'Campo obbligatorio',form.confrimPassword === form.password || 'Le due password non corrispondono']"
-                                                        label="Conferma Password"
-                                                        :type="show.confrimPassword ? 'text' : 'password'"
-                                                        :append-icon="show.confrimPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                                                        @click:append="show.confrimPassword = !show.confrimPassword"
-                                                        :error-messages="error"
-                                                    ></v-text-field>
-
-                                                    <v-autocomplete
-                                                        label="Aziende"
-                                                        :items="listCompanies"
-                                                        v-model="form.company_id"
-                                                        dense
-                                                        item-title="text"
-                                                        item-value="value"
-                                                        :rules="[value => !!value || 'Campo obbligatorio']"
-                                                        clearable
-                                                        :disabled="calling"
-                                                    ></v-autocomplete>
-                                                </template>
-                                            </v-form>
-
-                                        </v-window-item>
-                                        <v-window-item
-                                            v-if="!calling"
-                                            value="1"
-                                        >
-                                            <CreateCompany ref="CreateCompanyForm"></CreateCompany>
-                                        </v-window-item>
-                                    </v-window>
+                                    <template v-if="!calling">
+                                        <v-form ref="formCreateUser" :v-model="valid"  >
+                                            <v-text-field :disabled="loading" color="primary" label="email" name="email" v-model="form.email" :rules="[value => !!value || 'Campo Obbligatorio', rules.email]" type="email"></v-text-field>
+                                            <v-text-field :disabled="loading" color="primary" label="cf/piva" name="code_user" v-model="form.code_user" :rules="[value => !!value || 'Campo Obbligatorio',rules.cf_piva]" type="email" append-icon="mdi-smart-card" @click:append="randomFiscalCode"></v-text-field>
+                                            <v-text-field :disabled="loading" color="primary" label="anagrafica" name="name"  v-model="form.name"  :rules="[value => !!value || 'Campo Obbligatorio']" type="email"></v-text-field>
+                                            <v-text-field  v-model="form.password" :disabled="loading" :rules="[value => !!value || 'Campo obbligatorio']"  label="Password"
+                                                           :type="show.newPassword ? 'text' : 'password'"
+                                                           :append-icon="show.newPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                                                           @click:append="show.newPassword = !show.newPassword"
+                                            ></v-text-field>
+                                            <v-text-field
+                                                v-model="form.confrimPassword"
+                                                :disabled="loading"
+                                                :rules="[value => !!value || 'Campo obbligatorio',form.confrimPassword === form.password || 'Le due password non corrispondono']"
+                                                label="Conferma Password"
+                                                :type="show.confrimPassword ? 'text' : 'password'"
+                                                :append-icon="show.confrimPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                                                @click:append="show.confrimPassword = !show.confrimPassword"
+                                                :error-messages="error"
+                                            ></v-text-field>
+                                        </v-form>
+                                    </template>
+                                    <template v-if="calling">
+                                        <CreateCompany  ref="CreateCompanyForm"></CreateCompany>
+                                    </template>
 
                                 </v-col>
                             </v-row>
@@ -80,7 +49,7 @@
                     <v-divider dark></v-divider>
                     <v-card-actions >
                         <v-spacer></v-spacer>
-                        <v-btn v-if="calling" color="info" variant="outlined" :disabled="loading" @click="$router.push({name:$route.query.route})">
+                        <v-btn  color="info" variant="outlined" :disabled="loading" @click="$router.push({name:$route.query.route})">
                             Chiudi
                         </v-btn>
                         <v-progress-circular indeterminate color="dark" v-if="loading"></v-progress-circular>
@@ -103,11 +72,11 @@ import UsersApi from "../../../mixins/UsersApi.js";
 import BackRoute from "../../Common/BackRoute.vue";
 import SnackBarCommon from "../../Common/SnackBarCommon.vue";
 import CreateCompany from "./CreateCompany.vue";
-import {th} from "vuetify/locale";
-import store from "../../../store/index.js";
 
 export default {
     name: 'CreateUser',
+    computed: {
+    },
     components: {CreateCompany, SnackBarCommon, BackRoute},
     mixins:[storeComputed,Companies,UsersApi],
     data:() => ({
@@ -224,7 +193,7 @@ export default {
     created() {
         this.getCompanies();
         if(this.$route.query.calling !== undefined) {
-            this.calling = true
+            this.calling = this.$route.query.calling
         }
     }
 }

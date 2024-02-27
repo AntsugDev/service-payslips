@@ -10,10 +10,9 @@
             </v-toolbar>
             <v-card-text>
 
-                <template v-if="actualCompany !== null">
                 <v-row  align-content="center">
-                    <v-col cols="12" align-self="end">
-                        <v-chip prepend-icon="mdi-domain" color="info" variant="elevated">
+                    <v-col cols="12" align-self="end" >
+                        <v-chip  v-if="actualCompany !== null" prepend-icon="mdi-domain" color="info" variant="elevated">
                             COMPANY: {{ actualCompany }}
                         </v-chip>
                         <v-chip prepend-icon="mdi-email" color="indigo" variant="elevated">
@@ -21,7 +20,7 @@
                         </v-chip>
                     </v-col>
                 </v-row>
-                </template>
+
                 <v-row>
                     <v-col cols="12"></v-col>
                 </v-row>
@@ -34,7 +33,6 @@
                             dense
                             item-title="text"
                             item-value="value"
-                            item-props="disabled"
                             :rules="[value => !!value || 'Campo obbligatorio']"
                             clearable
                         ></v-autocomplete>
@@ -51,8 +49,8 @@
                 <v-btn :disabled="loading" color="info" variant="outlined" @click="$router.push({ name: 'ListUser' })">
                     chiudi
                 </v-btn>
-                <v-btn color="success" variant="outlined"  :disabled="loading" @click="">
-                    modifica/assegna
+                <v-btn color="success" variant="outlined"  :disabled="loading" @click="assegnaUserCompany">
+                    {{actualCompanyId !== null ? 'modifica' : 'assegna'}}
                 </v-btn>
             </v-card-actions>
         </v-card>
@@ -70,7 +68,8 @@ export default {
         loading:false,
         listCompanies: [],
         form:{
-            company_id: ''
+            company_id: '',
+            user_id: null
         },
         actualCompany: null,
         actualCompanyId: null,
@@ -85,7 +84,6 @@ export default {
                     this.listCompanies.push({
                         text: `${element.name}`+' '+`${element.address}`,
                         value: element.id,
-                        disabled: false
                     })
                 })
             })
@@ -93,16 +91,21 @@ export default {
         getDetailsUser:function (){
             this.detailsUser(this.$route.params.id).then(r =>{
                 let data = r.data.user
-                this.actualCompany   = data.company.name
-                this.actualCompanyId = data.company_id
-                this.email = data.email;
-                let findIdx = this.listCompanies.findIndex(e => {
-                    return e.value === this.actualCompanyId
-                })
-                if(findIdx > -1){
-                    delete this.listCompanies[findIdx]
+                if(data.company !== null){
+                    this.actualCompany   = data.company.name
+                    this.actualCompanyId = data.company_id
+                    if(this.actualCompanyId !== null)
+                        this.listCompanies = this.listCompanies.filter(e => {
+                            return e.value !== this.actualCompanyId
+                        })
                 }
-
+                this.email        = data.email;
+                this.form.user_id = this.$route.params.id
+            })
+        },
+        assegnaUserCompany: function (){
+            this.updateUserCompany(this.form.user_id,this.form.company_id).then(r => {
+                this.$router.push({name:'ListUser'})
             })
         }
     },

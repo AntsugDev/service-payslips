@@ -8,7 +8,7 @@
                 </v-icon>
                 <v-toolbar-title>Lista Utenti</v-toolbar-title>
                 <v-spacer></v-spacer>
-                <v-btn   depressed color="" @click="$router.push({ name: 'CreateUser',query:{calling: true,route:'ListUser'} })">
+                <v-btn   depressed color="" @click="$router.push({ name: 'CreateUser',query:{route:'ListUser'} })">
                     <v-icon dark>mdi-plus</v-icon>
                     Crea nuovo
                 </v-btn>
@@ -35,10 +35,10 @@
                     {{ item.updated_at !== null ? formatDate(item.updated_at) : "" }}
                 </template>
 
-                <template v-slot:[`item.actions`]="{ item }" v-if="!admin">
-
+                <template v-slot:[`item.actions`]="{ item }" >
 
                     <v-btn
+                        v-if="item.role !== 'Company'"
                         icon="mdi-domain"
                         density="compact"
                         color="light-green-darken-1"
@@ -53,7 +53,7 @@
                         color="deep-orange-darken-3"
                         alt="Cancella Utente"
                         title="Cancella Utente"
-                        @click="$router.push({ name: 'AdminDeleteUser', params: { id: item.id } })">
+                        @click="$router.push({ name: 'DeleteUser', params: { id: item.id },query:{back:'ListUser'} })">
                     </v-btn>
 
 

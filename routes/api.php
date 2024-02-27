@@ -2,9 +2,10 @@
 
 use App\Http\Api\Cities\CitiesController;
 use App\Http\Api\Compaines\CompaineisController;
+use App\Http\Api\Loggers\Controller\LoggerController;
+use App\Http\Api\PassSave\Controllers\PassCategoryController;
 use App\Http\Api\Users\EditUser;
 use App\Http\Api\Users\Users;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,6 +37,15 @@ Route::middleware('data-request')->group(function (){
                 Route::put('/create',[EditUser::class,'create_user_child']);
                 Route::get('/admin',[EditUser::class,'admin']);
                 Route::get('/admin/{user_id}',[EditUser::class,'user_details']);
+                Route::delete('/admin/delete/{user_id}',[EditUser::class,'destroy']);
+                Route::patch('/admin/change/{user_id}/{company_id}',[CompaineisController::class,'update_company_user']);
+                Route::match(['GET','DELETE'],'/log',[LoggerController::class,'index']);
+            });
+
+            Route::prefix('pass')->group(function (){
+
+                Route::resource('pass_category',PassCategoryController::class)->only(['index','store']);
+
             });
 
         });

@@ -6,6 +6,7 @@ use App\Models\Compaineis;
 use App\Models\User;
 use Database\Seeders\CitySeeders;
 use Database\Seeders\CompaniesSeeders;
+use Database\Seeders\PassSave\PassCategorySave;
 use Database\Seeders\RolesSeeders;
 use Database\Seeders\UserCreateSeeders;
 use Faker\Factory;
@@ -49,11 +50,19 @@ class SeedersMongoDb extends Command
             $dropDb = $this->choice('Vuoi cancellare il db?[s,n]',['s','n']);
 
             if(strcmp($dropDb,'s') === 0){
+                DB::connection('mongodb')->table('loggers')->delete();
                 DB::connection('mongodb')->table('cities')->delete();
                 DB::connection('mongodb')->table('roles')->delete();
                 DB::connection('mongodb')->table('users')->delete();
                 DB::connection('mongodb')->table('companies')->delete();
+
+                DB::connection('mongodb')->table('pass_category')->delete();
+
             }
+
+
+            $passCategory = new PassCategorySave();
+            $passCategory->run();
 
             $role       = new RolesSeeders();
             $role->run();

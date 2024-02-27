@@ -7,10 +7,6 @@
                 </v-icon>
                 <v-toolbar-title>Dettaglio Utente</v-toolbar-title>
                 <v-spacer></v-spacer>
-                <v-btn @reloadPage="reloadPage"  depressed color="" @click="$router.push({ name: 'CreateUser',query:{calling: true,route:'UserIndex'} })">
-                    <v-icon dark>mdi-plus</v-icon>
-                    Crea nuovo
-                </v-btn>
             </v-toolbar>
 
             <v-data-table

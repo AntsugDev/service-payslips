@@ -13,11 +13,32 @@ export const Menu = () =>   {
             {
                 text:'List Company',
                 icon: 'mdi-domain',
-                routeName: null,
+                routeName: 'ListCompany',
+                children: [],
+            },
+            {
+                text:'Logger',
+                icon: 'mdi-file-refresh',
+                routeName: 'LoggerList',
                 children: [],
             },
 
         ]
     else
-        return []
+        return [
+            {
+                text:'Pass Save',
+                icon: 'mdi-content-save',
+                routeName: null,
+                children: [
+                    {
+                        text:'Category',
+                        icon: 'mdi-treasure-ches',
+                        routeName: 'ListPassSaveCategory',
+                        children: [],
+                    }
+                ],
+            }
+
+        ]
 }

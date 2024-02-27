@@ -15,6 +15,11 @@ import ResetPassword from "../views/Admin/Users/ResetPassword.vue";
 import CreateUser from "../views/Admin/Users/CreateUser.vue";
 import ListUser from "../views/Admin/ListUser.vue";
 import ChangeCompany from "../views/Admin/Company/ChangeCompany.vue";
+import DeleteUser from "../views/Admin/Users/DeleteUser.vue";
+import List from "../views/Admin/Company/List.vue";
+import LoggerList from "../views/Admin/LoggerList.vue";
+import ListPassSaveCategory from "../views/PassSave/Category/ListPassSaveCategory.vue";
+import CreatePassSaveCategory from "../views/PassSave/Category/CreatePassSaveCategory.vue";
 
 const router = createRouter({
     history: createWebHistory(store.getters['config/appBasePath']),
@@ -64,6 +69,11 @@ const router = createRouter({
                             name:'ListUser',
                             component: ListUser
                         },
+                        {
+                            path:'delete/:id',
+                            name:'DeleteUser',
+                            component: DeleteUser
+                        },
 
                     ]
                 },
@@ -74,7 +84,41 @@ const router = createRouter({
                             path:'change/:id',
                             component:ChangeCompany,
                             name: 'ChangeCompany'
+                        },
+                        {
+                            path:'list',
+                            component:List,
+                            name: 'ListCompany'
+                        },
+                        {
+                            path:'logger',
+                            component:LoggerList,
+                            name: 'LoggerList'
                         }
+                    ]
+                },
+                {
+                    path:'pass_save',
+                    children:[
+
+                        {
+                            path:'category',
+                            children:[
+
+                                {
+                                    path: 'list',
+                                    component:ListPassSaveCategory,
+                                    name:'ListPassSaveCategory'
+                                },
+
+                                {
+                                    path: 'create',
+                                    component:CreatePassSaveCategory,
+                                    name:'CreatePassSaveCategory'
+                                }
+                            ]
+                        }
+
                     ]
                 }
             ]

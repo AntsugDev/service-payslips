@@ -9,12 +9,16 @@ use App\Http\Api\Core\Exceptions\Client\ForbiddenException;
 use App\Http\Api\Core\Exceptions\Client\MethodNotAllowedException;
 use App\Http\Api\Core\Exceptions\Client\ResourceNotFoundException;
 use App\Http\Api\Core\Exceptions\Server\InternalServerErrorException;
+use App\Models\LoggerModel;
+use Carbon\Carbon;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Spatie\FlareClient\Http\Exceptions\NotFound;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
@@ -54,6 +58,16 @@ class Handler extends ExceptionHandler
     {
         $accept_json = $request->expectsJson();
         if ($accept_json) {
+
+
+            LoggerModel::create([
+                "uuid" => Str::uuid()->toString(),
+                "name"=>$request->getRequestUri(),
+                "msg " => $e->getFile().':'.$e->getLine(). ' '.$e->getMessage(),
+                "date_insert" => Carbon::now()->format('d/m/Y H:i:s'),
+                "type" => "Exception"
+            ]);
+
             if ($e instanceof ModelNotFoundException) // Route - Model Binding fails
                 return (new ResourceNotFoundException)->render($request);
             else if ($e instanceof AuthorizationException) // Permission denied to perform the action

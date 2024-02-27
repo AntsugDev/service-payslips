@@ -154,4 +154,23 @@ class EditUser extends Controller
         }
         return  new JsonResponse(array("errors" => "Utente non autorizzato alla richiesta"), 401);
     }
+
+    public function destroy (Request $request, string $user_id) : JsonResponse|null
+    {
+        $user      = $request->user();
+        $admin     = strcmp($user->name,'Admin') === 0;
+        if($admin){
+            try {
+                User::where('uuid',$user_id)->delete();
+                return $this->json("Utenza cancellata con successo");
+            }
+            catch (\Exception $e) {
+                return new JsonResponse(array("errors" => "Non è stato possibile cancellare l'utenza(".$e->getMessage().")"), 406);
+            }
+
+        }
+        return  new JsonResponse(array("errors" => "Utente non autorizzato alla richiesta"), 401);
+
+    }
+
 }

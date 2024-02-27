@@ -51,17 +51,7 @@
                                         </v-col>
                                     </v-row>
                                     <v-row dense justify="space-between">
-                                        <v-col cols="6">
-                                            <v-btn
-                                            variant="outlined"
-                                            color="info"
-                                            class="font-weight-bold"
-                                            width="100%"
-                                            @click="$router.push({name: 'CreateUser'})"
-                                            :disabled="loading">
-                                            Crea utenza/company
-                                        </v-btn></v-col>
-                                        <v-col cols="6">
+                                        <v-col cols="12">
                                             <v-btn
                                                 variant="outlined"
                                                 color="warning"
@@ -97,8 +87,8 @@ export default {
         return {
             alert:null,
             valid: true,
-            email: 'admin@amministratore.it',
-            password: 'admin.007@',
+            email: 'ivana74@riva.org',
+            password: 'ivana74.007',
             loading: false,
             rules: {
                 email: value => {

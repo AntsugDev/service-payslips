@@ -1,4 +1,4 @@
-import {axiosInstance, GET, POST, PUT} from "../plugins/instance.api.js";
+import {axiosInstance, DELETE, GET, POST, PUT} from "../plugins/instance.api.js";
 
 
 let usersApi = {
@@ -27,6 +27,10 @@ let usersApi = {
         generateFiscalCode: function (state){
             let path = '/api/random/' + (state === undefined ? 1 : state)
             return axiosInstance(path,GET)
+        },
+        delUser: function (id){
+            let path = '/api/v1/user/admin/delete/'+id
+            return axiosInstance(path,DELETE);
         }
 
     }
