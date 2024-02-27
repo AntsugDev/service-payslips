@@ -4,11 +4,11 @@
         <v-container fluid class="fill-height align-content-start">
             <v-toolbar density="compact" flat color="primary" dark>
                 <v-icon class="ml-2">
-                    mdi-application-cog
+                    mdi-group
                 </v-icon>
-                <v-toolbar-title>Lista Categorie</v-toolbar-title>
+                <v-toolbar-title>Lista Groups</v-toolbar-title>
                 <v-spacer></v-spacer>
-                <v-btn   depressed color="" @click="$router.push({ name: 'CreatePassSaveCategory' })">
+                <v-btn   depressed color="" @click="$router.push({ name: 'CreatePassSaveGroups' })">
                     <v-icon dark>mdi-plus</v-icon>
                     Crea nuovo
                 </v-btn>
@@ -20,21 +20,6 @@
                 :loading="loading"
                 :headers="headers"
                 :items="listCategory">
-
-                <template v-slot:[`item.fields`]="{ item }">
-                    <v-list dense>
-                        <v-list-item v-for="(e,i) in item.fields" :key="i">
-                            <v-list-item-content>
-                                <v-list-item-title>{{e.title}}</v-list-item-title>
-                                <v-list-item-subtitle>{{e.description}} - {{e.type}} </v-list-item-subtitle>
-                                <v-divider></v-divider>
-                            </v-list-item-content>
-
-                        </v-list-item>
-                    </v-list>
-
-                </template>
-
                 <template v-slot:[`item.actions`]="{ item }">
 
                     <v-btn
@@ -43,7 +28,7 @@
                         color="red-darken-4"
                         alt="Cancellazione category"
                         title="Cancellazione category"
-                        @click="$router.push({ name: 'DeleteCategory', params: { id: item.id } })">
+                        @click="$router.push({ name: 'DeleteGroups', params: { id: item.id } })">
                     </v-btn>
                 </template>
 
@@ -54,17 +39,16 @@
 
 </template>
 <script>
-import Category from "../../../mixins/PassSave/Category.js";
+import Groups from "../../../mixins/PassSave/Groups.js";
 
 export default {
-    name: "ListPassSaveCategory",
-    mixins:[Category],
+    name: "ListPassSaveGroups",
+    mixins:[Groups],
     data: () =>({
         loading:false,
         headers:[
             {title:'Id',key:'id'},
             {title:'Nome',key:'name'},
-            {title:'Fields',key:'fields'},
             {title:'Azioni',key:'actions'},
         ],
         listCategory:[]

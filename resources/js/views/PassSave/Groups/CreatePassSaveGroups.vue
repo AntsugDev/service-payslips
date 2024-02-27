@@ -5,7 +5,7 @@
                 <v-toolbar dark flat color="primary" height="dense">
                     <v-toolbar-title class="text-center">
                         <h5 class="text-uppercase font-weight-regular text-wrap" style="letter-spacing: 2px">
-                            CREA CATEGORY
+                            CREA GROUPS
                         </h5>
                     </v-toolbar-title>
                 </v-toolbar>
@@ -13,7 +13,7 @@
                     <v-container>
                         <v-row>
                             <v-col cols="12" class="py-0">
-                                <v-form ref="formCreateCategory" :v-model="valid"  >
+                                <v-form ref="formCreateGroups" :v-model="valid"  >
                                     <v-text-field
                                         :disabled="loading"
                                         color="primary"
@@ -27,7 +27,7 @@
                         </v-row>
                     </v-container>
                 </v-card-text>
-                <CardAction :loading="loading" route="ListPassSaveCategory" btn-action="Crea" :action="saveCategory"></CardAction>
+                <CardAction :loading="loading" route="ListPassSaveGroups" btn-action="Crea" :action="saveGroups"></CardAction>
             </v-card>
         </v-dialog>
     </v-main>
@@ -36,12 +36,12 @@
 <script>
 
 import CardAction from "../../Common/CardAction.vue";
-import Category from "../../../mixins/PassSave/Category.js";
+import Groups from "../../../mixins/PassSave/Groups.js";
 
 export default {
-    name: "CreatePassSaveCategory",
+    name: "CreatePassSaveGroups",
     components: {CardAction},
-    mixins:[Category],
+    mixins:[Groups],
     data: () => ({
         dialog: true,
         valid:false,
@@ -51,11 +51,11 @@ export default {
         }
     }),
     methods:{
-        saveCategory: function (){
-            this.$refs.formCreateCategory.validate().then(r => {
+        saveGroups: function (){
+            this.$refs.formCreateGroups.validate().then(r => {
                 if(r.valid){
                     this.create(this.form).then(r => {
-                        this.$router.push({name:'ListPassSaveCategory'})
+                        this.$router.push({name:'ListPassSaveGroups'})
                     })
                 }
             })

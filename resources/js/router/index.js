@@ -21,6 +21,10 @@ import LoggerList from "../views/Admin/LoggerList.vue";
 import ListPassSaveCategory from "../views/PassSave/Category/ListPassSaveCategory.vue";
 import CreatePassSaveCategory from "../views/PassSave/Category/CreatePassSaveCategory.vue";
 import Tester from "../views/Tester/Tester.vue";
+import DeleteCategory from "../views/PassSave/Category/DeleteCategory.vue";
+import ListPassSaveGroups from "../views/PassSave/Groups/ListPassSaveGroups.vue";
+import CreatePassSaveGroups from "../views/PassSave/Groups/CreatePassSaveGroups.vue";
+import DeleteGroups from "../views/PassSave/Groups/DeleteGroups.vue";
 
 const router = createRouter({
     history: createWebHistory(store.getters['config/appBasePath']),
@@ -99,7 +103,7 @@ const router = createRouter({
                     ]
                 },
                 {
-                    path:'pass_save',
+                    path:'pass',
                     children:[
 
                         {
@@ -116,6 +120,33 @@ const router = createRouter({
                                     path: 'create',
                                     component:CreatePassSaveCategory,
                                     name:'CreatePassSaveCategory'
+                                },
+                                {
+                                    path: 'delete/:id',
+                                    component:DeleteCategory,
+                                    name:'DeleteCategory'
+                                }
+                            ]
+                        },
+                        {
+                            path:'groups',
+                            children:[
+
+                                {
+                                    path: 'list',
+                                    component:ListPassSaveGroups,
+                                    name:'ListPassSaveGroups'
+                                },
+
+                                {
+                                    path: 'create',
+                                    component:CreatePassSaveGroups,
+                                    name:'CreatePassSaveGroups'
+                                },
+                                {
+                                    path: 'delete/:id',
+                                    component:DeleteGroups,
+                                    name:'DeleteGroups'
                                 }
                             ]
                         }
@@ -123,11 +154,6 @@ const router = createRouter({
                     ]
                 },
             ]
-        },
-        {
-            path:'/tester',
-            name:'Tester',
-            component:Tester
         },
         {
             path: '/application-login',

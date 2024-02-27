@@ -18,6 +18,7 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Spatie\FlareClient\Http\Exceptions\NotFound;
@@ -93,6 +94,8 @@ class Handler extends ExceptionHandler
                 return (new InternalServerErrorException($e))->render($request);
 
         }
+        else
+            return  new JsonResponse(array("errors"=> "Richiesta non accettata"),406);
         return parent::render($request, $e);
     }
 }

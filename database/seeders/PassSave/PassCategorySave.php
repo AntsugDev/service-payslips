@@ -29,31 +29,124 @@ class PassCategorySave
 
             [
                 "uuid" => Str::uuid()->toString(),
-                "name" => "Email"
+                "name" => "Email",
+                "fields"=>[
+                    [
+                        "title" => "dominio",
+                        "description" =>"Dominio email",
+                        "type" => "string"
+                    ],
+                    [
+                        "title" => "email",
+                        "description" =>"Email",
+                        "type" => "string"
+                    ]
+                ]
             ],
             [
                 "uuid" => Str::uuid()->toString(),
-                "name" => "Account"
+                "name" => "Account",
+                "fields"=>[
+                    [
+                        "title" => "username",
+                        "description" =>"username",
+                        "type" => "string"
+                    ],
+                    [
+                        "title" => "password",
+                        "description" =>"password",
+                        "type" => "string"
+                    ]
+                ]
             ],
             [
                 "uuid" => Str::uuid()->toString(),
-                "name" => "SSO"
+                "name" => "SSO",
+                "fields"=>[
+                    [
+                        "title" => "username",
+                        "description" =>"username",
+                        "type" => "string"
+                    ],
+                    [
+                        "title" => "password",
+                        "description" =>"password",
+                        "type" => "string"
+                    ],
+                    [
+                        "title" => "private-key",
+                        "description" =>"Chiave private accesso",
+                        "type" => "string/url/file"
+                    ],
+                    [
+                        "title" => "public-key",
+                        "description" =>"Chiave pubblica accesso",
+                        "type" => "string/url/file"
+                    ],
+                    [
+                        "title" => "url",
+                        "description" =>"Url per accedere",
+                        "type" => "url"
+                    ]
+                ]
             ],
             [
                 "uuid" => Str::uuid()->toString(),
-                "name" => "DataBase"
+                "name" => "DataBase",
+                "fields"=>[
+                    [
+                        "title" => "username",
+                        "description" =>"username",
+                        "type" => "string"
+                    ],
+                    [
+                        "title" => "password",
+                        "description" =>"password",
+                        "type" => "string"
+                    ],
+                    [
+                        "title" => "host",
+                        "description" =>"Host",
+                        "type" => "string/url/file"
+                    ],
+                    [
+                        "title" => "typeDb",
+                        "description" =>"Tipologia di db",
+                        "type" => "string"
+                    ],
+                    [
+                        "title" => "nome",
+                        "description" =>"Nome database",
+                        "type" => "string"
+                    ]
+                ]
             ],
             [
                 "uuid" => Str::uuid()->toString(),
-                "name" => "Group Account"
+                "name" => "Group Account",
+                "fields"=>[
+                    [
+                        "title" => "url",
+                        "description" =>"url",
+                        "type" => "url"
+                    ],
+                    [
+                        "title" => "nome",
+                        "description" =>"Nome gruppo",
+                        "type" => "string"
+                    ],
+                    [
+                        "title" => "dati_accesso",
+                        "description" =>"Dati di accesso",
+                        "type" => "array"
+                    ],
+
+                ]
             ],
             [
                 "uuid" => Str::uuid()->toString(),
-                "name" => "Varie"
-            ],
-            [
-                "uuid" => Str::uuid()->toString(),
-                "name" => "Altro"
+                "name" => "Altro",
+                "fields" => []
             ]
 
         ]);

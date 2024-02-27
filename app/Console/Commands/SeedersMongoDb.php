@@ -64,19 +64,19 @@ class SeedersMongoDb extends Command
             $passCategory = new PassCategorySave();
             $passCategory->run();
 
-            $role       = new RolesSeeders();
-            $role->run();
-
-            $cities     = new CitySeeders();
-            $cities->run();
-
-            $lenCompainies = $this->ask('Inidica il numero di aziende da inserire');
-            $compainesSeeders = new CompaniesSeeders($lenCompainies);
-            $compainesSeeders->run();
-
-            $lenuser = $this->ask('Inidica il numero di utenti da inserire');
-            $userSeeders = new UserCreateSeeders($lenuser);
-            $userSeeders->run();
+//            $role       = new RolesSeeders();
+//            $role->run();
+//
+//            $cities     = new CitySeeders();
+//            $cities->run();
+//
+//            $lenCompainies = $this->ask('Inidica il numero di aziende da inserire');
+//            $compainesSeeders = new CompaniesSeeders($lenCompainies);
+//            $compainesSeeders->run();
+//
+//            $lenuser = $this->ask('Inidica il numero di utenti da inserire');
+//            $userSeeders = new UserCreateSeeders($lenuser);
+//            $userSeeders->run();
 
             \Laravel\Prompts\info("\n...Fine della creazione db mongo");
         }catch (CommandException $e){

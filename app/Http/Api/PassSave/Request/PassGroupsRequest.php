@@ -3,11 +3,12 @@
 namespace App\Http\Api\PassSave\Request;
 
 use App\Models\PassSave\PassCategory;
+use App\Models\PassSave\PassGroups;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\ValidationException;
 
-class PassCategoryRequest extends FormRequest
+class PassGroupsRequest extends FormRequest
 {
     protected function failedValidation(Validator $validator): ValidationException
     {
@@ -21,7 +22,7 @@ class PassCategoryRequest extends FormRequest
 
 
     public function verify():bool{
-        return PassCategory::where('name',request()->input('name'))->count() === 0;
+        return PassGroups::where('name',request()->input('name'))->where('user_id',request()->user()->uuid)->count() === 0;
     }
 
 

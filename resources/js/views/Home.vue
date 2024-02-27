@@ -7,8 +7,7 @@
             color="primary"
             :clipped="true"
             :mini-variant.sync="mini"
-            expand-on-hover
-            rail
+           permanent
             flat
 
         >
@@ -34,13 +33,13 @@
 
 
                         <v-list-item
+                            link
                             v-for="subMenu in item.children"
                             :key="subMenu"
                             :title="subMenu.text"
                             :prepend-icon="subMenu.icon"
-                            :to="subMenu.routeName"
+                            :to="{name:subMenu.routeName}"
                         >
-                            <v-list-item-icon></v-list-item-icon>
                         </v-list-item>
                     </v-list-group>
                 </v-list>
@@ -49,7 +48,7 @@
                     <v-list-item
                         :title="item.text"
                         :prepend-icon="item.icon"
-                        :to="item.routeName"
+                        :to="{name:item.routeName}"
                     ></v-list-item>
                 </v-list>
 

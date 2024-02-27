@@ -16,5 +16,6 @@ class PassCategory extends Model
     protected $fillable = [
         "uuid" ,
         "name",
+        "fields"
     ];
 }

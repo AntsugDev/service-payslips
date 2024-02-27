@@ -4,6 +4,8 @@ use App\Http\Api\Cities\CitiesController;
 use App\Http\Api\Compaines\CompaineisController;
 use App\Http\Api\Loggers\Controller\LoggerController;
 use App\Http\Api\PassSave\Controllers\PassCategoryController;
+use App\Http\Api\PassSave\Controllers\PassGroupsController;
+use App\Http\Api\PassSave\Controllers\PassSaveController;
 use App\Http\Api\Users\EditUser;
 use App\Http\Api\Users\Users;
 use Illuminate\Support\Facades\Route;
@@ -44,7 +46,9 @@ Route::middleware('data-request')->group(function (){
 
             Route::prefix('pass')->group(function (){
 
-                Route::resource('pass_category',PassCategoryController::class)->only(['index','store']);
+                Route::resource('pass_category',PassCategoryController::class)->only(['index','store','destroy']);
+                Route::resource('pass_groups',PassGroupsController::class)->only(['index','store','destroy']);
+                Route::resource('pass_save',PassSaveController::class)->only(['index','store','destroy']);
 
             });
 

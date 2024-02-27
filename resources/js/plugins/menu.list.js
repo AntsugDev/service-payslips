@@ -36,6 +36,12 @@ export const Menu = () =>   {
                         icon: 'mdi-application-cog',
                         routeName: 'ListPassSaveCategory',
                         children: [],
+                    },
+                    {
+                        text:'Groups',
+                        icon: 'mdi-group',
+                        routeName: 'ListPassSaveGroups',
+                        children: [],
                     }
                 ],
             }
