@@ -20,6 +20,7 @@ import List from "../views/Admin/Company/List.vue";
 import LoggerList from "../views/Admin/LoggerList.vue";
 import ListPassSaveCategory from "../views/PassSave/Category/ListPassSaveCategory.vue";
 import CreatePassSaveCategory from "../views/PassSave/Category/CreatePassSaveCategory.vue";
+import Tester from "../views/Tester/Tester.vue";
 
 const router = createRouter({
     history: createWebHistory(store.getters['config/appBasePath']),
@@ -120,8 +121,13 @@ const router = createRouter({
                         }
 
                     ]
-                }
+                },
             ]
+        },
+        {
+            path:'/tester',
+            name:'Tester',
+            component:Tester
         },
         {
             path: '/application-login',

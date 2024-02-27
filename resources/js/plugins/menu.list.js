@@ -33,7 +33,7 @@ export const Menu = () =>   {
                 children: [
                     {
                         text:'Category',
-                        icon: 'mdi-treasure-ches',
+                        icon: 'mdi-application-cog',
                         routeName: 'ListPassSaveCategory',
                         children: [],
                     }

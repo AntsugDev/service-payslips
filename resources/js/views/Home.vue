@@ -7,35 +7,53 @@
             color="primary"
             :clipped="true"
             :mini-variant.sync="mini"
-            permanent
+            expand-on-hover
+            rail
             flat
+
         >
             <v-divider></v-divider>
 
-            <v-list dense>
-                <template v-for="(item, index) in items" :key="index">
-                    <v-list-item  link v-if="item.children">
-                        <v-list-item-content >
-                            <v-list-item-title>{{ item.text }}</v-list-item-title>
-                        </v-list-item-content>
-                    </v-list-item>
-                    <v-list-group v-else>
-                        <template v-slot:activator>
-                            <v-list-item-content>
-                                <v-list-item-title>{{ item.text }}</v-list-item-title>
-                            </v-list-item-content>
+
+            <template v-for="item in drawerItems">
+                <v-list density="compact"
+                        :opened="opened"
+                        @update:opened="newOpened => opened = newOpened.slice(-1)"
+                        v-if="item.children.length > 0"
+                        nav
+                >
+                    <v-list-group v-model="item.active" >
+                        <template v-slot:activator="{ props }">
+                            <v-list-item
+                                :key="item.text"
+                                v-bind="props"
+                                :title="item.text"
+                                :prepend-icon="item.icon"
+                            ></v-list-item>
                         </template>
 
-                        <v-list-item v-for="(child, childIndex) in item.children" :key="childIndex" link>
-                            <v-list-item-content>
-                                <v-list-item-title>{{ child.text }}</v-list-item-title>
-                            </v-list-item-content>
+
+                        <v-list-item
+                            v-for="subMenu in item.children"
+                            :key="subMenu"
+                            :title="subMenu.text"
+                            :prepend-icon="subMenu.icon"
+                            :to="subMenu.routeName"
+                        >
+                            <v-list-item-icon></v-list-item-icon>
                         </v-list-item>
                     </v-list-group>
+                </v-list>
 
-                </template>
-            </v-list>
+                <v-list density="compact" v-else nav>
+                    <v-list-item
+                        :title="item.text"
+                        :prepend-icon="item.icon"
+                        :to="item.routeName"
+                    ></v-list-item>
+                </v-list>
 
+            </template>
 
 
 
@@ -64,8 +82,14 @@ import SnackBarCommon from "./Common/SnackBarCommon.vue";
 import BtnLogout from "./Common/BtnLogout.vue";
 import {Menu} from "../plugins/menu.list.js";
 import Config from "../store/modules/Config.js";
+import {it} from "vuetify/locale";
 
 export default {
+    computed: {
+        it() {
+            return it
+        }
+    },
     components: {BtnLogout, SnackBarCommon},
     mixins: [storeComputed],
     name: "Home",
@@ -73,16 +97,7 @@ export default {
         mini: false,
         userMenu: false,
         drawerItems: Menu(),
-        items: [
-            { text: 'Dashboard' },
-            {
-                text: 'Menu with Submenu',
-                children: [
-                    { text: 'Submenu Item 1' },
-                    { text: 'Submenu Item 2' }
-                ]
-            },
-        ]
+        opened:[]
     }),
     methods: {
         logout: function () {
