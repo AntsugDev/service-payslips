@@ -7,12 +7,24 @@ import Home from "../views/Home.vue";
 import ApplicationLogin from "../views/Logins/ApplicationLogin.vue";
 
 /** Admin */
-import AdminUsersIndex from "../views/Admin/Users/UsersIndex.vue";
-import AdminCreateUser from "../views/Admin/Users/UsersCreate.vue";
-import AdminDeleteUser from "../views/Admin/Users/UsersDelete.vue";
-import AdminEditUser from "../views/Admin/Users/UsersEdit.vue";
 
-import AdminHome from "../views/Admin/AdminHome.vue";
+import moment from "moment";
+import UsersIndex from "../views/Admin/Users/UsersIndex.vue";
+import EditPassword from "../views/Admin/Users/EditPassword.vue";
+import ResetPassword from "../views/Admin/Users/ResetPassword.vue";
+import CreateUser from "../views/Admin/Users/CreateUser.vue";
+import ListUser from "../views/Admin/ListUser.vue";
+import ChangeCompany from "../views/Admin/Company/ChangeCompany.vue";
+import DeleteUser from "../views/Admin/Users/DeleteUser.vue";
+import List from "../views/Admin/Company/List.vue";
+import LoggerList from "../views/Admin/LoggerList.vue";
+import ListPassSaveCategory from "../views/PassSave/Category/ListPassSaveCategory.vue";
+import CreatePassSaveCategory from "../views/PassSave/Category/CreatePassSaveCategory.vue";
+import Tester from "../views/Tester/Tester.vue";
+import DeleteCategory from "../views/PassSave/Category/DeleteCategory.vue";
+import ListPassSaveGroups from "../views/PassSave/Groups/ListPassSaveGroups.vue";
+import CreatePassSaveGroups from "../views/PassSave/Groups/CreatePassSaveGroups.vue";
+import DeleteGroups from "../views/PassSave/Groups/DeleteGroups.vue";
 
 const router = createRouter({
     history: createWebHistory(store.getters['config/appBasePath']),
@@ -22,45 +34,123 @@ const router = createRouter({
             name: 'Home',
             component: Home,
             beforeEnter: (to, from, next) => {
-                if (localStorage.getItem('pds-provisioning-token')) {
-                    next();
+                let jwt = store.getters['user/getJwt'];
+                if (jwt.access_token !== null) {
+                    let expired = jwt.expired
+                    let now   = moment();
+                    let fisrt_access= store.getters['user/getFirstAccess']
+                    if(expired > now.format('DD/MM/YYYY HH:mm:ss')){
+                        if(!fisrt_access)
+                            next();
+                        else
+                            next({ name: 'ResetPassword',query:{
+                                        email: btoa(store.getters['user/getEmailUser']),
+                                        uuid: btoa(store.getters['user/getId'])
+                                    } })
+                    }
+                    else{
+                        next({ name: 'ApplicationLogin',query:{logout: "Session exipred"} });
+                    }
                 } else {
-                    next({ name: 'ApplicationLogin' });
-                }
-            },
-        },
-        {
-            path: '/admin',
-            name: 'AdminHome',
-            component: AdminHome,
-            beforeEnter: (to, from, next) => {
-                if (store.state.user.isAuthenticated === true) {
-                    next();
-                } else {
-                    next({ name: 'Home' });
+                    next({ name: 'ApplicationLogin',query:{logout:"Errore in fase di login, autorizzazione negata"} });
                 }
             },
             children: [
                 {
-                    path: 'users',
-                    name: 'AdminUsersIndex',
-                    component: AdminUsersIndex,
+                    path: 'user',
                     children: [
                         {
-                            path: "create",
-                            name: "AdminCreateUser",
-                            component: AdminCreateUser
+                            path:'details',
+                            name:'UserIndex',
+                            component: UsersIndex
                         },
                         {
-                            path: "edit/:id",
-                            name: "AdminEditUser",
-                            component: AdminEditUser
+                            path:'password/:id',
+                            name:'EditPassword',
+                            component: EditPassword
                         },
                         {
-                            path: "delete/:id",
-                            name: "AdminDeleteUser",
-                            component: AdminDeleteUser
+                            path:'admin',
+                            name:'ListUser',
+                            component: ListUser
+                        },
+                        {
+                            path:'delete/:id',
+                            name:'DeleteUser',
+                            component: DeleteUser
+                        },
+
+                    ]
+                },
+                {
+                    path:'company',
+                    children:[
+                        {
+                            path:'change/:id',
+                            component:ChangeCompany,
+                            name: 'ChangeCompany'
+                        },
+                        {
+                            path:'list',
+                            component:List,
+                            name: 'ListCompany'
+                        },
+                        {
+                            path:'logger',
+                            component:LoggerList,
+                            name: 'LoggerList'
                         }
+                    ]
+                },
+                {
+                    path:'pass',
+                    children:[
+
+                        {
+                            path:'category',
+                            children:[
+
+                                {
+                                    path: 'list',
+                                    component:ListPassSaveCategory,
+                                    name:'ListPassSaveCategory'
+                                },
+
+                                {
+                                    path: 'create',
+                                    component:CreatePassSaveCategory,
+                                    name:'CreatePassSaveCategory'
+                                },
+                                {
+                                    path: 'delete/:id',
+                                    component:DeleteCategory,
+                                    name:'DeleteCategory'
+                                }
+                            ]
+                        },
+                        {
+                            path:'groups',
+                            children:[
+
+                                {
+                                    path: 'list',
+                                    component:ListPassSaveGroups,
+                                    name:'ListPassSaveGroups'
+                                },
+
+                                {
+                                    path: 'create',
+                                    component:CreatePassSaveGroups,
+                                    name:'CreatePassSaveGroups'
+                                },
+                                {
+                                    path: 'delete/:id',
+                                    component:DeleteGroups,
+                                    name:'DeleteGroups'
+                                }
+                            ]
+                        }
+
                     ]
                 },
             ]
@@ -68,11 +158,22 @@ const router = createRouter({
         {
             path: '/application-login',
             name: 'ApplicationLogin',
-            component: ApplicationLogin
+            component: ApplicationLogin,
+
+        },
+        {
+            path:'/reset/password',
+            name:'ResetPassword',
+            component: ResetPassword
+        },
+        {
+            path:'/user/create',
+            name:'CreateUser',
+            component: CreateUser
         },
         {
             path: '/:pathMatch(.*)*',
-            redirect: { name: 'AdminHome', params: {} }
+            redirect: { name: 'ApplicationLogin', query: {logout:"Page not found"} }
         }
     ],
 });

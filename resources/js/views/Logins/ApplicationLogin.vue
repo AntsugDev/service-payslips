@@ -5,16 +5,12 @@
                 <v-row align="center" justify="center">
                     <v-col cols="12" sm="8" md="4">
                         <v-card class="elevation-12">
-                            <v-snackbar v-model="snackbar.show" top :color="snackbar.color" :timeout="3000" dense absolute>
-                                {{ snackbar.text }}
-                                <template v-slot:action="{attr}">
-                                    <v-btn :color="snackbar.color" fab x-small dark v-bind="attr"
-                                           @click="$store.commit('snackbar/update', { show: false })" class="elevation-6">
-                                        <v-icon>mdi-close</v-icon>
-                                    </v-btn>
-                                </template>
-                            </v-snackbar>
+                            <template v-if="alert  !== null">
+                                <v-alert  color="info">{{alert}}</v-alert>
+                                <v-divider></v-divider>
+                            </template>
                             <v-toolbar color="primary" dark flat dense>
+                                <SnackBarCommon></SnackBarCommon>
                                 <v-toolbar-title color="secondary" class="font-weight-bold">ACCESSO</v-toolbar-title>
                             </v-toolbar>
                             <v-card-text>
@@ -30,18 +26,44 @@
                                                               label="Password" name="password" prepend-icon="mdi-lock"
                                                               v-model="password"
                                                               :rules="[value => !!value || 'Devi inserire la password']"
-                                                              type="password"></v-text-field>
+                                                              :type="show.password ? 'text' : 'password'"
+                                                              :append-icon="show.password ? 'mdi-eye' : 'mdi-eye-off'"
+                                                              @click:append="show.password = !show.password"
+                                                ></v-text-field>
                                             </v-form>
                                         </v-col>
                                     </v-row>
                                 </v-container>
+                                <v-divider></v-divider>
                             </v-card-text>
                             <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn color="primary" class="font-weight-bold" width="100%" dark @click="login"
-                                       :disabled="loading">
-                                    Accedi
-                                </v-btn>
+                                <v-container>
+                                    <v-row dense>
+                                        <v-col cols="12">
+                                            <v-btn
+                                                variant="outlined"
+                                                color="primary" class="font-weight-bold"
+                                                width="100%"
+                                                @click="login"
+                                                :disabled="loading">
+                                                Accedi
+                                            </v-btn>
+                                        </v-col>
+                                    </v-row>
+                                    <v-row dense justify="space-between">
+                                        <v-col cols="12">
+                                            <v-btn
+                                                variant="outlined"
+                                                color="warning"
+                                                class="font-weight-bold"
+                                                width="100%"
+                                                @click="$router.push({name: 'ResetPassword'})"
+                                                :disabled="loading">
+                                                Reset Password
+                                            </v-btn>
+                                        </v-col>
+                                    </v-row>
+                                </v-container>
                             </v-card-actions>
                         </v-card>
                     </v-col>
@@ -55,15 +77,18 @@
 import storeComputed from "../../mixins/storeComputed";
 import UsersApi from "../../mixins/UsersApi.js";
 import {th} from "vuetify/locale";
+import SnackBarCommon from "../Common/SnackBarCommon.vue";
 
 export default {
     name: "ApplicationLogin",
+    components: {SnackBarCommon},
     mixins: [storeComputed,UsersApi],
     data() {
         return {
+            alert:null,
             valid: true,
-            email: '',
-            password: '',
+            email: 'ivana74@riva.org',
+            password: 'ivana74.007',
             loading: false,
             rules: {
                 email: value => {
@@ -71,11 +96,9 @@ export default {
                     return pattern.test(value) || 'Devi inserire un indirizzo email valido'
                 },
             },
-            snackbar:{
-                show:false,
-                color: null,
-                text:null
-            }
+            show:{
+                password:false
+            },
         }
     },
     methods: {
@@ -94,24 +117,26 @@ export default {
                     this.loading = false;
                     let response = res.data
                     this.$store.commit('user/create',response)
-                    this.$router.push({
-                        name: 'Home'
-                    });
-
-                }).catch(error => {
-                    let errorText = error.response.data.error
-                    this.snackbar.show = true;
-                    this.snackbar.color = "red";
-                    this.snackbar.text = errorText;
-                }).finally(() => {
-                    this.loading = false;
-                });
+                    this.$router.push({name:'UserIndex'});
+                }).catch(e =>{
+                        this.loading = false;
+                    }
+                )
             }
         }
     },
     computed: {
         config: function () {
             return this.$store.state.config;
+        },
+    },
+    mounted() {
+        if(this.$route.query.logout !== undefined){
+            this.$store.commit('snackbar/update',{
+                show: true,
+                text: this.$route.query.logout,
+                color: 'info'
+            })
         }
     }
 }

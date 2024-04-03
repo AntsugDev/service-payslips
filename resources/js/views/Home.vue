@@ -1,72 +1,109 @@
 <template>
     <v-app id="inspire">
-        <v-snackbar v-model="snackbar.show" top :color="snackbar.color" :timeout="3000" dense>
-            {{ snackbar.text }}
-            <template v-slot:action="{ attrs }">
-                <v-btn :color="snackbar.color" fab x-small dark v-bind="attrs"
-                    @click="$store.commit('snackbar/update', { show: false })" class="elevation-6">
-                    <v-icon>mdi-close</v-icon>
-                </v-btn>
+        <SnackBarCommon></SnackBarCommon>
+        <v-navigation-drawer
+            app
+            v-model="config.drawer"
+            color="primary"
+            :clipped="true"
+            :mini-variant.sync="mini"
+           permanent
+            flat
+
+        >
+            <v-divider></v-divider>
+
+
+            <template v-for="item in drawerItems">
+                <v-list density="compact"
+                        :opened="opened"
+                        @update:opened="newOpened => opened = newOpened.slice(-1)"
+                        v-if="item.children.length > 0"
+                        nav
+                >
+                    <v-list-group v-model="item.active" >
+                        <template v-slot:activator="{ props }">
+                            <v-list-item
+                                :key="item.text"
+                                v-bind="props"
+                                :title="item.text"
+                                :prepend-icon="item.icon"
+                            ></v-list-item>
+                        </template>
+
+
+                        <v-list-item
+                            link
+                            v-for="subMenu in item.children"
+                            :key="subMenu"
+                            :title="subMenu.text"
+                            :prepend-icon="subMenu.icon"
+                            :to="{name:subMenu.routeName}"
+                        >
+                        </v-list-item>
+                    </v-list-group>
+                </v-list>
+
+                <v-list density="compact" v-else nav>
+                    <v-list-item
+                        :title="item.text"
+                        :prepend-icon="item.icon"
+                        :to="{name:item.routeName}"
+                    ></v-list-item>
+                </v-list>
+
             </template>
-        </v-snackbar>
+
+
+
+
+        </v-navigation-drawer>
+
+
+        <v-app-bar app color="primary" :clipped-left="true" class="elevation-1">
+            <v-app-bar-nav-icon @click.stop="$store.commit('config/changeDrawer')" class="primary white--text"></v-app-bar-nav-icon>
+            <v-toolbar-title>Service PaySlips</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <BtnLogout></BtnLogout>
+        </v-app-bar>
         <v-main>
-            <v-container class="fill-height justify-center" v-if="!user.isAuthenticated">
-                <v-progress-circular :size="50" color="primary" indeterminate></v-progress-circular>
-            </v-container>
-            <router-view v-else></router-view>
+
+            <router-view></router-view>
         </v-main>
     </v-app>
 </template>
 
 <script>
-import StoreComputed from "../mixins/storeComputed";
-import whoAmIApi from "../mixins/WhoAmIApi";
-import responseErrorHandler from "../mixins/ResponseErrorHandler";
+
+
+import storeComputed from "../mixins/storeComputed.js";
+import SnackBarCommon from "./Common/SnackBarCommon.vue";
+import BtnLogout from "./Common/BtnLogout.vue";
+import {Menu} from "../plugins/menu.list.js";
+import Config from "../store/modules/Config.js";
+import {it} from "vuetify/locale";
 
 export default {
-    mixins: [StoreComputed, whoAmIApi, responseErrorHandler],
+    computed: {
+        it() {
+            return it
+        }
+    },
+    components: {BtnLogout, SnackBarCommon},
+    mixins: [storeComputed],
     name: "Home",
     data: () => ({
-        getWhoAmIRequest: { loading: true }
+        mini: false,
+        userMenu: false,
+        drawerItems: Menu(),
+        opened:[]
     }),
-    watch: {
-        'user': {
-            handler(user) {
-                // if (user.role.id === 1) {
-                this.$router.push({ name: 'AdminHome' })
-                // } else if (user.role.id === 4) {
-                // this.$router.push({ name: 'HelpdeskHome' })
-                // }
-            },
-            deep: true
-        }
+    methods: {
+        logout: function () {
+            this.$router.push({ name: 'ApplicationLogin',query:{logout: 'Logout effettuato'} }).then(() => {
+            }).catch(e => console.log(e));
+        },
     },
-    beforeCreate() {
-        if (localStorage.getItem('pds-provisioning-token')) {
-            this.$store.commit('user/update', { jwtToken: localStorage.getItem('pds-provisioning-token') });
-        } else {
-            this.$router.push({ name: 'ApplicationLogin' });
-        }
-    },
-    created() {
-        this.getWhoAmI()
-            .then(response => {
-                this.$store.commit('user/update', {
-                    isAuthenticated: true,
-                    firstName: response.data.data.user.first_name,
-                    lastName: response.data.data.user.last_name,
-                    email: response.data.data.user.email,
-                    role: response.data.data.user.role,
-                    jwtToken: response.data.data.user.jwtToken,
-                });
-            })
-            .catch(error => {
-                this.handleResponseError(error)
-            })
-            .finally(() => {
-                this.getWhoAmIRequest.loading = false
-            })
-    }
 }
 </script>
 

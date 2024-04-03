@@ -56,6 +56,17 @@ return [
             'throw' => false,
         ],
 
+        "export"=> [
+            'driver' => 'local',
+            'root' => storage_path('export'),
+            'throw' => false,
+        ],
+        "router"=> [
+            'driver' => 'local',
+            'root' => storage_path('router'),
+            'throw' => false,
+        ]
+
     ],
 
     /*

@@ -1,61 +1,38 @@
-import {th} from "vuetify/locale";
-import {axiosInstance, POST} from "../plugins/instance.api.js";
+import {axiosInstance, DELETE, GET, POST, PUT} from "../plugins/instance.api.js";
 
 
 let usersApi = {
     methods: {
         loginEnter: function (payloadRequestUser){
-            return axiosInstance('/api/token-user',POST,undefined,payloadRequestUser,undefined)
+            return axiosInstance('/api/oauth',POST,payloadRequestUser,['company','get_role'])
         },
-        /** USERS */
-        getUsers: function (params, userId) {
-            let usersIncludes = ['role'];
-            let param = (userId !== undefined) ? '/' + userId : '';
-            Object.assign(params, { includes: usersIncludes.join(',') });
-            return this.axios.get(this.$store.getters['config/appUrl'] + '/api/v2/users' + param, {
-                params: params,
-                headers: {
-                    Authorization: 'Bearer ' + this.user.jwtToken,
-                    Accept: 'application/json'
-                }
-            })
+        changePassword: function (payloadRequestUser, id){
+            let path = '/api/v1/user/password/'+id
+            return axiosInstance(path,POST,payloadRequestUser);
         },
-        postUser: function (params) {
-            return this.axios.post(this.$store.getters['config/appUrl'] + '/api/v2/users', {
-                data: params
-            }, {
-                headers: {
-                    Authorization: 'Bearer ' + this.user.jwtToken,
-                    Accept: 'application/json'
-                }
-            })
+        stepperAjax: function (payloadRequest){
+            let path = '/api/reset/check_email/'+payloadRequest
+            return axiosInstance(path,GET)
         },
-        deleteUser: function (userId) {
-            return this.axios.delete(this.$store.getters['config/appUrl'] + '/api/v2/users/' + userId, {
-                headers: {
-                    Authorization: 'Bearer ' + this.user.jwtToken,
-                    Accept: 'application/json'
-                }
-            })
+        changePasswordStepper: function (payloadRequest,uuid){
+            let path = '/api/reset/update_password/'+uuid
+            return axiosInstance(path,POST,payloadRequest)
         },
-        patchSelectedUser: function (userId, params) {
-            return this.axios.patch(this.$store.getters['config/appUrl'] + '/api/v2/users/' + userId, {
-                data: params,
-            }, {
-                headers: {
-                    Authorization: 'Bearer ' + this.user.jwtToken,
-                    Accept: 'application/json'
-                }
-            })
+        createUser: function (payloadRequest){
+            return axiosInstance('/api/create',PUT,payloadRequest)
         },
-        getUserRoles: function () {
-            return this.axios.get(this.$store.getters['config/appUrl'] + '/api/v2/roles', {
-                headers: {
-                    Authorization: 'Bearer ' + this.user.jwtToken,
-                    Accept: 'application/json'
-                }
-            })
+        createChildUser: function (payloadRequest){
+            return axiosInstance('/api/v1/user/create ',PUT,payloadRequest)
+        },
+        generateFiscalCode: function (state){
+            let path = '/api/random/' + (state === undefined ? 1 : state)
+            return axiosInstance(path,GET)
+        },
+        delUser: function (id){
+            let path = '/api/v1/user/admin/delete/'+id
+            return axiosInstance(path,DELETE);
         }
+
     }
 };
 

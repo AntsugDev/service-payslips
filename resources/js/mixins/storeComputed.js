@@ -8,7 +8,7 @@ let storeComputed = {
         },
         snackbar() {
             return this.$store.state.snackbar;
-        }
+        },
     },
 };
 

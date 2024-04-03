@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Laravel\Sanctum\HasApiTokens;
 use MongoDB\Laravel\Eloquent\Model;
@@ -19,17 +20,17 @@ class User extends Model implements Authenticatable,JWTSubject
     use  HasFactory,HasApiTokens;
 
 
+    protected $primaryKey = 'uuid';
 
     public function getAuthIdentifierName(): string
     {
-        return 'code_user';
+        return 'uuid';
     }
 
     public function getAuthIdentifier()
     {
         return $this->getKey();
     }
-
 
 
     protected $connection="mongodb";
@@ -41,11 +42,16 @@ class User extends Model implements Authenticatable,JWTSubject
      * @var array<int, string>
      */
     protected $fillable = [
+        'uuid',
         'email',
         'name',
         'code_user',
         'password',
-        'company_id'
+        'password_at',
+        'change_password',
+        'user_id', //user padre uguale a uuid
+        'company_id' ,//la relazione con la tabella companies
+        'role_id'
     ];
 
     public function getRememberToken()
@@ -75,15 +81,28 @@ class User extends Model implements Authenticatable,JWTSubject
 
     public function getJWTCustomClaims(): array
     {
-        return [
-            "type" => "Bearer",
-            "expired" => Carbon::now()->addHours()->format('d/m/Y H:i:s'),
-            "access_token" => null,
-        ];
+        return [];
     }
 
 
-    public function company (){
-        return $this->belongsTo(Compaineis::class,'company_id','_id');
+    public function company (string $uuid){
+
+        return User::where('user_id',$uuid)->get();
     }
+
+    public function details_company(){
+        return $this->belongsTo(Compaineis::class,'company_id','uuid');
+    }
+
+    public function checkId (string $id){
+        return User::where('id',$id)->count() > 0;
+    }
+
+    public function get_role(){
+        return $this->belongsTo(Role::class,'role_id','uuid')->pluck('name');
+    }
+
+
+
+
 }

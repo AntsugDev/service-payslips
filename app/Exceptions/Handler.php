@@ -9,15 +9,23 @@ use App\Http\Api\Core\Exceptions\Client\ForbiddenException;
 use App\Http\Api\Core\Exceptions\Client\MethodNotAllowedException;
 use App\Http\Api\Core\Exceptions\Client\ResourceNotFoundException;
 use App\Http\Api\Core\Exceptions\Server\InternalServerErrorException;
+use App\Models\LoggerModel;
+use Carbon\Carbon;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Js;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Spatie\FlareClient\Http\Exceptions\NotFound;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Throwable;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class Handler extends ExceptionHandler
 {
@@ -51,21 +59,43 @@ class Handler extends ExceptionHandler
     {
         $accept_json = $request->expectsJson();
         if ($accept_json) {
+
+
+            LoggerModel::create([
+                "uuid" => Str::uuid()->toString(),
+                "name"=>$request->getRequestUri(),
+                "msg " => $e->getFile().':'.$e->getLine(). ' '.$e->getMessage(),
+                "date_insert" => Carbon::now()->format('d/m/Y H:i:s'),
+                "type" => "Exception"
+            ]);
+
             if ($e instanceof ModelNotFoundException) // Route - Model Binding fails
                 return (new ResourceNotFoundException)->render($request);
             else if ($e instanceof AuthorizationException) // Permission denied to perform the action
                 return (new ForbiddenException)->render($request);
             else if ($e instanceof MethodNotAllowedHttpException)
                 return (new MethodNotAllowedException)->render($request);
-            else if ($e instanceof ValidationException)
+            else if ($e instanceof ValidationException) {
                 return (new BaseValidationException($e->validator, $e->response, $e->errorBag))->render($request);
+            }
             else if ($e instanceof AuthenticationException )
                 return (new BaseAuthenticationException)->render($request);
+            else if($e instanceof \ErrorException)
+                return new JsonResponse(array("errors"=> 'ErrorException:'.$e->getFile().':'.$e->getLine().' '.$e->getMessage()),Response::HTTP_UNPROCESSABLE_ENTITY);
+            else if($e instanceof  UnauthorizedHttpException) {
+                return new JsonResponse(array("errors" => 'Token expired e/o User not found('.$e->getMessage().')'), Response::HTTP_NOT_ACCEPTABLE);
+            }
+            else if($e instanceof  NotFound){
+                return new JsonResponse(array("errors" => $e->getMessage()), Response::HTTP_NOT_ACCEPTABLE);
+            }
+            else if($e instanceof \Exception)
+                return new JsonResponse(array("errors" => $e->getMessage()), Response::HTTP_NOT_ACCEPTABLE);
             else if (!$e instanceof BaseException)
                 return (new InternalServerErrorException($e))->render($request);
-            else
-                return (new \Exception($e))->render($request);
+
         }
+        else
+            return  new JsonResponse(array("errors"=> "Richiesta non accettata"),406);
         return parent::render($request, $e);
     }
 }

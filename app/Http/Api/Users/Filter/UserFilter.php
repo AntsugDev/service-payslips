@@ -28,6 +28,6 @@ class UserFilter extends QueryFilters
      */
     public function allowed_includes(): array
     {
-        return ['company'];
+        return ['company','get_role'];
     }
 }
